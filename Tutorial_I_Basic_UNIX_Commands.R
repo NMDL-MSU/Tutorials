@@ -53,7 +53,7 @@ ls
 #' in human readble form. Try it out, copy paste the following comand:  
 
 #+ eval=FALSE  
-df -h
+df -h ~
 
 #'   
 #' ### Create new directory  
