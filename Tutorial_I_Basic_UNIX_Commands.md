@@ -53,7 +53,7 @@ in human readble form. Try it out, copy paste the following comand:
 
 
 ```r
-df -h
+df -h ~
 ```
 
   
