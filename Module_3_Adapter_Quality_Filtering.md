@@ -1,7 +1,7 @@
 ---
 title: Adapter and Quality Filtering
 author: Deborah Velez-Irizarry
-date: Updated Jan 2 2020
+date: Updated Jan 3 2020
 output:
   prettydoc::html_pretty:
     theme: hpstr
@@ -42,7 +42,7 @@ nano Merge_RNASeq_reads_per_animal.sh
 #======================================================================
 #   Script: Merge_RNASeq_reads_per_animal.sh
 #   Directory Code: /mnt/home/netid/RNAseq_Pipeline/Merged
-#   Date: January 2, 2020
+#   Date: January 3, 2020
 #   Description: Merge RNA-Seq reads for each animal into
 #          a single fastq file.
 #   Run: bash Merge_RNASeq_reads_per_animal.sh
@@ -67,7 +67,7 @@ mkdir /mnt/home/netid/RNAseq_Pipeline/Merged/qstat
 qstat=/mnt/home/netid/RNAseq_Pipeline/Merged/qstat
 
 # Move script to work directory
-mv /mnt/home/netid/RNAseq_Pipeline/Merge_RNASeq_reads_per_animal.sh $Merg
+mv ~/RNAseq_Pipeline/Merge_RNASeq_reads_per_animal.sh $Merg
 
 # Animal IDs
 cd $Raw
@@ -140,13 +140,13 @@ Trimmomatic is a flexable read trimming tool created for Illumina next-generatio
 To learn more about Trimmomatic refer to:
 
 > Bolger, A.M., Lohse, M., &amp; Usadel, B. (2014). [Trimmomatic: A flexible trimmer for Illumina Sequence Data.](https://www.ncbi.nlm.nih.gov/pubmed/24695404) Bioinformatics, btu170.  
-> [Website](http://www.usadellab.org/cms/index.php?page=trimmomatic)  
+> [Trimmomatic Website](http://www.usadellab.org/cms/index.php?page=trimmomatic)  
 
 
 The parameters used to performe this step are as follows:
 
 **ILLUMINACLIP:**  
-Cuts the Illumina-sequence specific adapters. We will trim the TruSeq3-PE adapter sequences.
+Cuts the Illumina-sequence specific adapters. We will trim the TruSeq3-PE adapter sequences shown below.
 
 > PrefixPE/1 TACACTCTTTCCCTACACGACGCTCTTCCGATCT  
 > PrefixPE/2 GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT  
@@ -170,7 +170,7 @@ Sliding window to scan read, we will use a 4-base window and trim if the average
 **MINLEN**  
 Drop reads with a minumin length of 75 bases.
 
-**Master Script**  
+  
 First, save the master script to the working directory you created for the RNAseq pipeline tutorial.
 
 ```bash
@@ -184,7 +184,7 @@ nano adapter_trimming.sh
 #======================================================================
 #   File: adapter_trimming.sh
 #   Directory code: /mnt/home/netid/RNAseq_Pipeline/Trimmomatic
-#   Date: January 2, 2020
+#   Date: January 3, 2020
 #   Description: Trim adapter sequences using Trimmomatic software
 #   Run: bash adapter_trimming.sh
 #----------------------------------------------------------------------
@@ -211,7 +211,7 @@ trim=/mnt/scratch/netid/Trimmomatic
 
 # Bash qstatistics directory
 mkdir /mnt/home/netid/RNAseq_Pipeline/Trimmomatic/qstat
-qstat=mnt/home/netid/RNAseq_Pipeline/Trimmomatic/qstat
+qstat=/mnt/home/netid/RNAseq_Pipeline/Trimmomatic/qstat
 
 # Paired end reads directory
 mkdir /mnt/scratch/netid/Trimmomatic/PE
@@ -222,7 +222,7 @@ mkdir /mnt/scratch/netid/Trimmomatic/SE
 se=/mnt/scratch/netid/Trimmomatic/SE
 
 ## Move bash script to work directory
-mv /mnt/home/netid/RNAseq_Pipeline/adapter_trimming.sh /mnt/home/netid/RNAseq_Pipeline/Trimmomatic
+mv ~/RNAseq_Pipeline/adapter_trimming.sh ~/RNAseq_Pipeline/Trimmomatic
 
 
 ### Generate bash scripts to run trimmomatic per animal
@@ -243,7 +243,7 @@ module load Trimmomatic
 cd '$trim'
 
 # Filter adaptor sequences from fastq
-java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.38.jar PE '$raw'/'${anim[$i]}'_R1_merged.fastq '$raw'/'${anim[$i]}'_R2_merged.fastq '${anim[$i]}'_R1_merged_PE.fastq '${anim[$i]}'_R1_merged_SE.fastq '${anim[$i]}'_R2_merged_PE.fastq '${anim[$i]}'_R2_merged_SE.fastq ILLUMINACLIP:$EBROOTTRIMMOMATIC/adapters/TruSeq3-PE-2.fa HEADCROP:6 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:75
+java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.38.jar PE '$raw'/'${anim[$i]}'_R1_merged.fastq '$raw'/'${anim[$i]}'_R2_merged.fastq '${anim[$i]}'_R1_merged_PE.fastq '${anim[$i]}'_R1_merged_SE.fastq '${anim[$i]}'_R2_merged_PE.fastq '${anim[$i]}'_R2_merged_SE.fastq ILLUMINACLIP:$EBROOTTRIMMOMATIC/adapters/TruSeq3-PE-2.fa:2:30:10 HEADCROP:6 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:75
 
 # Move paired end files to PE and singles to SE
 mv '${anim[$i]}'_R1_merged_PE.fastq '${anim[$i]}'_R2_merged_PE.fastq '$pe'
@@ -279,7 +279,7 @@ to make sure the jobs ran with no errors.
 
 ```bash
 cd /mnt/scratch/netid/Trimmomatic/qstat
-bash /mnt/research/NMDL/Tutorials/.checkJobs
+bash ~/RNAseq_Pipeline/.checkJobs
 ```
 
 ### Generate summary for quality trimming
@@ -310,8 +310,8 @@ nano merge_rst_trim_adapters.sh
 ```bash
 #===================================================================
 #   File: merge_rst_trim_adapters.sh
-#   Directory: /mnt/scratch/netid/Trimmomatic
-#   Date: January 2, 2020
+#   Directory: /mnt/home/netid/RNAseq_Pipeline/Trimmomatic
+#   Date: January 3, 2020
 #   Description: Check that all files were properly trimmed and merge
 #                all the results.
 #   Run: bash merge_rst_trim_adapters.sh
@@ -335,13 +335,16 @@ cd $raw
 anim=(`ls *.fastq | cut -f1 -d_ | uniq`)
 
 ### Output directory
-trim=/mnt/home/netid/RNAseq_Pipeline/Trimmomatic
+trim=/mnt/scratch/netid/Trimmomatic
 
 ### Input directory
-rst=/mnt/scratch/netid/Trimmomatic
+rst=/mnt/home/netid/RNAseq_Pipeline/Trimmomatic
 
 ### Qstat directory
-qstat=/mnt/scratch/velezdeb/Trimmomatic/qstat
+qstat=/mnt/home/netid/RNAseq_Pipeline/Trimmomatic/qstat
+
+## Move bash script to Trimmomatic directory
+mv ~/RNAseq_Pipeline/merge_rst_trim_adapters.sh ~/RNAseq_Pipeline/Trimmomatic
 
 # Check if you have an output for each file
 pe=$trim/PE
@@ -400,18 +403,222 @@ Now you can run the script using bash.
 bash adapter_trimming.sh
 ```
 
-This bash script will be run interactively; meaning that it will not be submitted to the scheduler. An error generated from this script will
-point you to a job that did not generate output. If you get an error rerun the qsub script for that file.
-Refer to the qstat job output file for further instructions. If the job did not finish in the time allocated or 
-used up more memory than requested you will need to edit the qsub file and increase the requested resorces before 
-resubmitting the job to SLURM. 
+This bash script will be run interactively; meaning that it will not be submitted to the 
+scheduler. An error generated from this script will point you to a job that did not generate 
+output. If you get an error rerun the qsub script for that file. Refer to the qstat job output 
+file for further instructions. If the job did not finish in the time allocated or used up more 
+memory than requested you will need to edit the qsub file and increase the requested resorces 
+before resubmitting the job to SLURM. 
 
 Let us review the summary files generated.
 
 ```bash
 cd /mnt/home/netid/RNAseq_Pipeline/Trimmomatic
-head trimmomatic_rst.txt
+cat trimmomatic_rst.txt
 ```
+
+We would expect a high percent of retained paired reads and about less than 2.5% dropped reads 
+in this step. Let us review the percent of retained paired reads and dropped reads.
+
+```bash
+cd /mnt/home/netid/RNAseq_Pipeline/Trimmomatic
+cat rst_trim_adapt.txt | cut -f1,8,21 -d' '
+```
+
+
+### Assessing Filtered Read Quality: FASTQC 
+
+We have successfully removed Illumina adapter sequences from our RNA-seq data and filtered out 
+low quality bases. Let us review the quality of these filtered reads. We need to first run
+`FASTQC` followed by `MultiQC` to concatenate the FASTQC summaries. 
+
+```bash
+cd ~/RNAseq_Pipeline
+nano FastQC_quality_filtered.sh
+```
+
+> Copy the following script and paste in the terminal editor window.
+
+
+```bash
+#==============================================================================
+#   File: FastQC_quality_filtered.sh
+#   Directory code: /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered
+#   Date: January 3, 2020
+#   Description: Generate FastQC reports for raw sequence reads.
+#   Run: bash FastQC_Filtered.sh
+#------------------------------------------------------------------------------
+#   Input files in directory:
+#       /mnt/scratch/netid/Trimmomatic
+#
+#   Output files to directory:
+#       /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered
+#==============================================================================
+
+### Directory input files
+filter=/mnt/scratch/netid/Trimmomatic
+
+### Directory output files
+## Create output directory
+mkdir ~/RNAseq_Pipeline/Quality/Filtered
+
+# Output directory
+out=/mnt/home/netid/RNAseq_Pipeline/Quality/Filtered
+
+## Create qstat directory for SLURM input/output files
+mkdir ~/RNAseq_Pipeline/Quality/Filtered/qstat
+
+# SLURM input/output directory
+qstat=/mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/qstat
+
+# Animal IDs
+cd /mnt/scratch/netid/RAW
+anim=(`ls *.fastq | cut -f1 -d_ | uniq`)
+
+# Write bash script for each animal
+for ((i=0; i<${#anim[@]} ; i++ )) do
+echo '#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=1
+#SBATCH --time=04:00:00
+#SBATCH --mem=10G
+#SBATCH -J '${anim[$i]}_FastQC'
+#SBATCH -o '${anim[$i]}_FastQC.o%j'
+
+module load FastQC
+
+# Change to filtered fastq directory
+cd '$filter'
+
+# Generate quality reports for paired reads
+fastqc --outdir='$out' ./PE/'${anim[$i]}'*
+
+# Generate quality reports for paired reads
+fastqc --outdir='$out' ./SE/'${anim[$i]}'*
+
+# qstat
+scontrol show job $SLURM_JOB_ID' > $qstat/${anim[$i]}_FastQC.qsub
+
+# Submit job to hpcc
+cd $qstat
+sbatch ${anim[$i]}_FastQC.qsub
+
+done
+```
+
+> Save the script by pressing `Ctrl o` and `enter`. To exit press `Ctrl x`.
+
+Same as before, the master script points to `netid` directories. We need to replace `netid` 
+with your username. 
+
+```bash
+sed -i 's/netid/username/g' FastQC_quality_filtered.sh
+bash FastQC_quality_filtered.sh
+```
+
+The FASTQC master will create a new directory in your Quality folder called `Filtered`. 
+Let us take a look at one of the submitted scripts:
+
+```bash
+cd ~/RNAseq_Pipeline/Quality/Filtered/qstat
+cat `ls *.qsub* | tail -1`
+```
+
+Check the status of the submitted jobs by using the show jobs shortcut:
+
+```bash
+sq
+```
+
+For now, we wait for the jobs to finish. Only when the `sq` displays zero running jobs can we proceed to the next step.
+
+
+### Generate MultiQC Report: Filtered
+
+Before checking the quality summaries for the raw sequence, files let us first make sure all our jobs ran without errors or warnings. 
+Change to the `qstat` directory and run `checkJobs`.
+
+```bash
+cd ~/RNAseq_Pipeline/Quality/Filtered/qstat
+bash ~/RNAseq_Pipeline/.checkJobs
+```
+
+If the jobs finished with no errors we can proceed to generate the MultiQC report:
+
+```bash
+cd ~/RNAseq_Pipeline
+nano multiQC_quality_filtered.sh
+```
+
+> Copy the following script and paste in the terminal editor window.
+
+```bash
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=1
+#SBATCH --time=04:00:00
+#SBATCH --mem=10G
+#SBATCH -J 'MultiQC'
+#SBATCH -o '/mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/MultiQC/MultiQC.o%j'
+
+#==============================================================================
+#   File: multiQC_quality_filtered.sh
+#   Directory code: /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/MultiQC
+#   Date: January 3, 2020
+#   Description: Concatenate FASTQC quality reports into a single file.
+#   Run: sbatch multiQC_quality_filtered.sh
+#------------------------------------------------------------------------------
+#   Input files in directory:
+#       /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered
+#
+#   Output files to directory:
+#       /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/MultiQC
+#==============================================================================
+
+### Directory input files
+mkdir /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/output
+Qrep=/mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/output
+mv /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/*.zip $Qrep
+
+### Directory output files
+## Create MultiQC output directory
+mkdir /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/MultiQC
+
+# Output directory
+QC=/mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/MultiQC
+
+#' Activate virtual environment
+cd /mnt/home/netid/RNAseq_Pipeline/Quality/Raw/MultiQC
+source QC/bin/activate
+
+# Generate a summary file
+cd $QC
+multiqc $Qrep
+deactivate
+
+# Move bash script to work directory
+mv ~/RNAseq_Pipeline/multiQC_quality_filtered.sh $QC
+
+# Job details
+scontrol show job $SLURM_JOB_ID
+```
+
+> Replace `netid` with your username.
+
+```bash
+sed -i 's/netid/username/g' multiQC_quality_filtered.sh
+```
+
+Now you can run MultiQC on the filtered FASTQ files.
+
+```bash
+cd ~/RNAseq_pipeline/
+sbatch multiQC_raw.sh
+```
+
+Download the MultiQC report for quality filtered reads and compare with the previous MultiQC
+report generated for the raw sequence reads. You should see an improvement in the base quality
+phred scores and see no adpater sequences.
 
 I hope you enjoyed this tutorial. Send any comments or suggestions to velezdeb@msu.edu.
 

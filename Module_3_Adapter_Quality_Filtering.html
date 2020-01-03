@@ -142,7 +142,7 @@ code span.ot { color: #007020; }
 <div class="header-title-wrap">
 <h1 class="title toc-ignore entry-title">Adapter and Quality Filtering</h1>
 <h3 class="author">Deborah Velez-Irizarry</h3>
-<h3 class="date">Updated Jan 2 2020</h3>
+<h3 class="date">Updated Jan 3 2020</h3>
 </div><!-- /.header-title-wrap -->
 </header>
 
@@ -155,6 +155,8 @@ code span.ot { color: #007020; }
 <li><a href="#merge-fasta-files">Merge Fasta files</a></li>
 <li><a href="#trimmomatic">Trimmomatic</a></li>
 <li><a href="#generate-summary-for-quality-trimming">Generate summary for quality trimming</a></li>
+<li><a href="#assessing-filtered-read-quality-fastqc">Assessing Filtered Read Quality: FASTQC</a></li>
+<li><a href="#generate-multiqc-report-filtered">Generate MultiQC Report: Filtered</a></li>
 </ul>
 </div>
 
@@ -181,7 +183,7 @@ code span.ot { color: #007020; }
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co">#======================================================================</span></a>
 <a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#   Script: Merge_RNASeq_reads_per_animal.sh</span></a>
 <a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#   Directory Code: /mnt/home/netid/RNAseq_Pipeline/Merged</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#   Date: January 2, 2020</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#   Date: January 3, 2020</span></a>
 <a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#   Description: Merge RNA-Seq reads for each animal into</span></a>
 <a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#          a single fastq file.</span></a>
 <a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#   Run: bash Merge_RNASeq_reads_per_animal.sh</span></a>
@@ -206,7 +208,7 @@ code span.ot { color: #007020; }
 <a class="sourceLine" id="cb3-26" data-line-number="26"><span class="va">qstat=</span>/mnt/home/netid/RNAseq_Pipeline/Merged/qstat</a>
 <a class="sourceLine" id="cb3-27" data-line-number="27"></a>
 <a class="sourceLine" id="cb3-28" data-line-number="28"><span class="co"># Move script to work directory</span></a>
-<a class="sourceLine" id="cb3-29" data-line-number="29"><span class="fu">mv</span> /mnt/home/netid/RNAseq_Pipeline/Merge_RNASeq_reads_per_animal.sh <span class="va">$Merg</span></a>
+<a class="sourceLine" id="cb3-29" data-line-number="29"><span class="fu">mv</span> ~/RNAseq_Pipeline/Merge_RNASeq_reads_per_animal.sh <span class="va">$Merg</span></a>
 <a class="sourceLine" id="cb3-30" data-line-number="30"></a>
 <a class="sourceLine" id="cb3-31" data-line-number="31"><span class="co"># Animal IDs</span></a>
 <a class="sourceLine" id="cb3-32" data-line-number="32"><span class="bu">cd</span> <span class="va">$Raw</span></a>
@@ -265,11 +267,11 @@ code span.ot { color: #007020; }
 <p>Trimmomatic is a flexable read trimming tool created for Illumina next-generation sequencing data. To learn more about Trimmomatic refer to:</p>
 <blockquote>
 <p>Bolger, A.M., Lohse, M., &amp; Usadel, B. (2014). <a href="https://www.ncbi.nlm.nih.gov/pubmed/24695404">Trimmomatic: A flexible trimmer for Illumina Sequence Data.</a> Bioinformatics, btu170.<br />
-<a href="http://www.usadellab.org/cms/index.php?page=trimmomatic">Website</a></p>
+<a href="http://www.usadellab.org/cms/index.php?page=trimmomatic">Trimmomatic Website</a></p>
 </blockquote>
 <p>The parameters used to performe this step are as follows:</p>
 <p><strong>ILLUMINACLIP:</strong><br />
-Cuts the Illumina-sequence specific adapters. We will trim the TruSeq3-PE adapter sequences.</p>
+Cuts the Illumina-sequence specific adapters. We will trim the TruSeq3-PE adapter sequences shown below.</p>
 <blockquote>
 <p>PrefixPE/1 TACACTCTTTCCCTACACGACGCTCTTCCGATCT<br />
 PrefixPE/2 GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT<br />
@@ -288,8 +290,7 @@ Cut the trailing bases only if below a quality of 3</p>
 Sliding window to scan read, we will use a 4-base window and trim if the average quality is below 15.</p>
 <p><strong>MINLEN</strong><br />
 Drop reads with a minumin length of 75 bases.</p>
-<p><strong>Master Script</strong><br />
-First, save the master script to the working directory you created for the RNAseq pipeline tutorial.</p>
+<p>First, save the master script to the working directory you created for the RNAseq pipeline tutorial.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="bu">cd</span> ~/RNAseq_Pipeline</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="fu">nano</span> adapter_trimming.sh</a></code></pre></div>
 <blockquote>
@@ -298,7 +299,7 @@ First, save the master script to the working directory you created for the RNAse
 <div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co">#======================================================================</span></a>
 <a class="sourceLine" id="cb8-2" data-line-number="2"><span class="co">#   File: adapter_trimming.sh</span></a>
 <a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#   Directory code: /mnt/home/netid/RNAseq_Pipeline/Trimmomatic</span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#   Date: January 2, 2020</span></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#   Date: January 3, 2020</span></a>
 <a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#   Description: Trim adapter sequences using Trimmomatic software</span></a>
 <a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">#   Run: bash adapter_trimming.sh</span></a>
 <a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co">#----------------------------------------------------------------------</span></a>
@@ -325,7 +326,7 @@ First, save the master script to the working directory you created for the RNAse
 <a class="sourceLine" id="cb8-28" data-line-number="28"></a>
 <a class="sourceLine" id="cb8-29" data-line-number="29"><span class="co"># Bash qstatistics directory</span></a>
 <a class="sourceLine" id="cb8-30" data-line-number="30"><span class="fu">mkdir</span> /mnt/home/netid/RNAseq_Pipeline/Trimmomatic/qstat</a>
-<a class="sourceLine" id="cb8-31" data-line-number="31"><span class="va">qstat=</span>mnt/home/netid/RNAseq_Pipeline/Trimmomatic/qstat</a>
+<a class="sourceLine" id="cb8-31" data-line-number="31"><span class="va">qstat=</span>/mnt/home/netid/RNAseq_Pipeline/Trimmomatic/qstat</a>
 <a class="sourceLine" id="cb8-32" data-line-number="32"></a>
 <a class="sourceLine" id="cb8-33" data-line-number="33"><span class="co"># Paired end reads directory</span></a>
 <a class="sourceLine" id="cb8-34" data-line-number="34"><span class="fu">mkdir</span> /mnt/scratch/netid/Trimmomatic/PE</a>
@@ -336,7 +337,7 @@ First, save the master script to the working directory you created for the RNAse
 <a class="sourceLine" id="cb8-39" data-line-number="39"><span class="va">se=</span>/mnt/scratch/netid/Trimmomatic/SE</a>
 <a class="sourceLine" id="cb8-40" data-line-number="40"></a>
 <a class="sourceLine" id="cb8-41" data-line-number="41"><span class="co">## Move bash script to work directory</span></a>
-<a class="sourceLine" id="cb8-42" data-line-number="42"><span class="fu">mv</span> /mnt/home/netid/RNAseq_Pipeline/adapter_trimming.sh /mnt/home/netid/RNAseq_Pipeline/Trimmomatic</a>
+<a class="sourceLine" id="cb8-42" data-line-number="42"><span class="fu">mv</span> ~/RNAseq_Pipeline/adapter_trimming.sh ~/RNAseq_Pipeline/Trimmomatic</a>
 <a class="sourceLine" id="cb8-43" data-line-number="43"></a>
 <a class="sourceLine" id="cb8-44" data-line-number="44"></a>
 <a class="sourceLine" id="cb8-45" data-line-number="45"><span class="co">### Generate bash scripts to run trimmomatic per animal</span></a>
@@ -357,7 +358,7 @@ First, save the master script to the working directory you created for the RNAse
 <a class="sourceLine" id="cb8-60" data-line-number="60"><span class="st">cd '</span><span class="va">$trim</span><span class="st">'</span></a>
 <a class="sourceLine" id="cb8-61" data-line-number="61"></a>
 <a class="sourceLine" id="cb8-62" data-line-number="62"><span class="st"># Filter adaptor sequences from fastq</span></a>
-<a class="sourceLine" id="cb8-63" data-line-number="63"><span class="st">java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.38.jar PE '</span><span class="va">$raw</span><span class="st">'/'</span><span class="va">${anim[$i]}</span><span class="st">'_R1_merged.fastq '</span><span class="va">$raw</span><span class="st">'/'</span><span class="va">${anim[$i]}</span><span class="st">'_R2_merged.fastq '</span><span class="va">${anim[$i]}</span><span class="st">'_R1_merged_PE.fastq '</span><span class="va">${anim[$i]}</span><span class="st">'_R1_merged_SE.fastq '</span><span class="va">${anim[$i]}</span><span class="st">'_R2_merged_PE.fastq '</span><span class="va">${anim[$i]}</span><span class="st">'_R2_merged_SE.fastq ILLUMINACLIP:$EBROOTTRIMMOMATIC/adapters/TruSeq3-PE-2.fa HEADCROP:6 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:75</span></a>
+<a class="sourceLine" id="cb8-63" data-line-number="63"><span class="st">java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.38.jar PE '</span><span class="va">$raw</span><span class="st">'/'</span><span class="va">${anim[$i]}</span><span class="st">'_R1_merged.fastq '</span><span class="va">$raw</span><span class="st">'/'</span><span class="va">${anim[$i]}</span><span class="st">'_R2_merged.fastq '</span><span class="va">${anim[$i]}</span><span class="st">'_R1_merged_PE.fastq '</span><span class="va">${anim[$i]}</span><span class="st">'_R1_merged_SE.fastq '</span><span class="va">${anim[$i]}</span><span class="st">'_R2_merged_PE.fastq '</span><span class="va">${anim[$i]}</span><span class="st">'_R2_merged_SE.fastq ILLUMINACLIP:$EBROOTTRIMMOMATIC/adapters/TruSeq3-PE-2.fa:2:30:10 HEADCROP:6 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:75</span></a>
 <a class="sourceLine" id="cb8-64" data-line-number="64"></a>
 <a class="sourceLine" id="cb8-65" data-line-number="65"><span class="st"># Move paired end files to PE and singles to SE</span></a>
 <a class="sourceLine" id="cb8-66" data-line-number="66"><span class="st">mv '</span><span class="va">${anim[$i]}</span><span class="st">'_R1_merged_PE.fastq '</span><span class="va">${anim[$i]}</span><span class="st">'_R2_merged_PE.fastq '</span><span class="va">$pe</span><span class="st">'</span></a>
@@ -380,7 +381,7 @@ First, save the master script to the working directory you created for the RNAse
 <div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="fu">bash</span> adapter_trimming.sh</a></code></pre></div>
 <p>This step should take about an hour to run. Wait until all jobs have finished before continuing to the step. To check the jobs status use <code>qs</code>. When all jobs have finished run the checkjobs within the <code>qstat</code> directory to make sure the jobs ran with no errors.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="bu">cd</span> /mnt/scratch/netid/Trimmomatic/qstat</a>
-<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="fu">bash</span> /mnt/research/NMDL/Tutorials/.checkJobs</a></code></pre></div>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="fu">bash</span> ~/RNAseq_Pipeline/.checkJobs</a></code></pre></div>
 </div>
 <div id="generate-summary-for-quality-trimming" class="section level3">
 <h3>Generate summary for quality trimming</h3>
@@ -395,8 +396,8 @@ First, save the master script to the working directory you created for the RNAse
 </blockquote>
 <div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="co">#===================================================================</span></a>
 <a class="sourceLine" id="cb14-2" data-line-number="2"><span class="co">#   File: merge_rst_trim_adapters.sh</span></a>
-<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="co">#   Directory: /mnt/scratch/netid/Trimmomatic</span></a>
-<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="co">#   Date: January 2, 2020</span></a>
+<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="co">#   Directory: /mnt/home/netid/RNAseq_Pipeline/Trimmomatic</span></a>
+<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="co">#   Date: January 3, 2020</span></a>
 <a class="sourceLine" id="cb14-5" data-line-number="5"><span class="co">#   Description: Check that all files were properly trimmed and merge</span></a>
 <a class="sourceLine" id="cb14-6" data-line-number="6"><span class="co">#                all the results.</span></a>
 <a class="sourceLine" id="cb14-7" data-line-number="7"><span class="co">#   Run: bash merge_rst_trim_adapters.sh</span></a>
@@ -420,55 +421,58 @@ First, save the master script to the working directory you created for the RNAse
 <a class="sourceLine" id="cb14-25" data-line-number="25"><span class="va">anim=(</span><span class="kw">`</span><span class="fu">ls</span> *.fastq <span class="kw">|</span> <span class="fu">cut</span> -f1 -d_ <span class="kw">|</span> <span class="fu">uniq</span><span class="kw">`</span><span class="va">)</span></a>
 <a class="sourceLine" id="cb14-26" data-line-number="26"></a>
 <a class="sourceLine" id="cb14-27" data-line-number="27"><span class="co">### Output directory</span></a>
-<a class="sourceLine" id="cb14-28" data-line-number="28"><span class="va">trim=</span>/mnt/home/netid/RNAseq_Pipeline/Trimmomatic</a>
+<a class="sourceLine" id="cb14-28" data-line-number="28"><span class="va">trim=</span>/mnt/scratch/netid/Trimmomatic</a>
 <a class="sourceLine" id="cb14-29" data-line-number="29"></a>
 <a class="sourceLine" id="cb14-30" data-line-number="30"><span class="co">### Input directory</span></a>
-<a class="sourceLine" id="cb14-31" data-line-number="31"><span class="va">rst=</span>/mnt/scratch/netid/Trimmomatic</a>
+<a class="sourceLine" id="cb14-31" data-line-number="31"><span class="va">rst=</span>/mnt/home/netid/RNAseq_Pipeline/Trimmomatic</a>
 <a class="sourceLine" id="cb14-32" data-line-number="32"></a>
 <a class="sourceLine" id="cb14-33" data-line-number="33"><span class="co">### Qstat directory</span></a>
-<a class="sourceLine" id="cb14-34" data-line-number="34"><span class="va">qstat=</span>/mnt/scratch/velezdeb/Trimmomatic/qstat</a>
+<a class="sourceLine" id="cb14-34" data-line-number="34"><span class="va">qstat=</span>/mnt/home/netid/RNAseq_Pipeline/Trimmomatic/qstat</a>
 <a class="sourceLine" id="cb14-35" data-line-number="35"></a>
-<a class="sourceLine" id="cb14-36" data-line-number="36"><span class="co"># Check if you have an output for each file</span></a>
-<a class="sourceLine" id="cb14-37" data-line-number="37"><span class="va">pe=$trim</span>/PE</a>
-<a class="sourceLine" id="cb14-38" data-line-number="38"><span class="va">se=$trim</span>/SE</a>
-<a class="sourceLine" id="cb14-39" data-line-number="39"></a>
-<a class="sourceLine" id="cb14-40" data-line-number="40"><span class="co"># Paired</span></a>
-<a class="sourceLine" id="cb14-41" data-line-number="41"><span class="co"># If all jobs generated output you should not get any output.</span></a>
-<a class="sourceLine" id="cb14-42" data-line-number="42"><span class="kw">for</span> <span class="kw">((</span>i=0; i&lt;<span class="va">${#anim[@]}</span> ; i++ <span class="kw">))</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb14-43" data-line-number="43"><span class="fu">ls</span> <span class="va">$pe</span>/<span class="va">${anim[$i]}</span>_R1_merged_PE.fastq <span class="op">&gt;</span> <span class="va">$pe</span>/temp</a>
-<a class="sourceLine" id="cb14-44" data-line-number="44"><span class="fu">ls</span> <span class="va">$pe</span>/<span class="va">${anim[$i]}</span>_R2_merged_PE.fastq <span class="op">&gt;</span> <span class="va">$pe</span>/temp</a>
-<a class="sourceLine" id="cb14-45" data-line-number="45"><span class="kw">done</span>; <span class="fu">rm</span> <span class="va">$pe</span>/temp</a>
-<a class="sourceLine" id="cb14-46" data-line-number="46"></a>
-<a class="sourceLine" id="cb14-47" data-line-number="47"><span class="co"># Single</span></a>
-<a class="sourceLine" id="cb14-48" data-line-number="48"><span class="co"># If all jobs generated output you should not get any output.</span></a>
-<a class="sourceLine" id="cb14-49" data-line-number="49"><span class="kw">for</span> <span class="kw">((</span>i=0; i&lt;<span class="va">${#anim[@]}</span> ; i++ <span class="kw">))</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb14-50" data-line-number="50"><span class="fu">ls</span> <span class="va">$se</span>/<span class="va">${anim[$i]}</span>_R1_merged_SE* <span class="op">&gt;</span> <span class="va">$se</span>/temp</a>
-<a class="sourceLine" id="cb14-51" data-line-number="51"><span class="fu">ls</span> <span class="va">$se</span>/<span class="va">${anim[$i]}</span>_R2_merged_SE* <span class="op">&gt;</span> <span class="va">$se</span>/temp</a>
-<a class="sourceLine" id="cb14-52" data-line-number="52"><span class="kw">done</span>; <span class="fu">rm</span> <span class="va">$se</span>/temp</a>
-<a class="sourceLine" id="cb14-53" data-line-number="53"></a>
-<a class="sourceLine" id="cb14-54" data-line-number="54"><span class="co"># Check if all files completed successfully</span></a>
-<a class="sourceLine" id="cb14-55" data-line-number="55"><span class="co"># If all jobs generated output you should not get any output.</span></a>
-<a class="sourceLine" id="cb14-56" data-line-number="56"><span class="bu">cd</span> <span class="va">$qstat</span></a>
-<a class="sourceLine" id="cb14-57" data-line-number="57"><span class="kw">for</span> <span class="kw">((</span>i=0; i&lt;<span class="va">${#anim[@]}</span> ; i++ <span class="kw">))</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb14-58" data-line-number="58"><span class="bu">echo</span> <span class="kw">`</span><span class="bu">echo</span> -n <span class="st">''</span><span class="va">${anim[$i]}</span><span class="st">' '</span> <span class="kw">;</span>  <span class="fu">grep</span> <span class="st">'TrimmomaticPE: C'</span> <span class="va">${anim[$i]}</span>_*<span class="kw">`</span> <span class="op">&gt;&gt;</span> ../completed.txt</a>
-<a class="sourceLine" id="cb14-59" data-line-number="59"><span class="kw">done</span></a>
-<a class="sourceLine" id="cb14-60" data-line-number="60"></a>
-<a class="sourceLine" id="cb14-61" data-line-number="61"><span class="co"># Merge Results and save to text file</span></a>
-<a class="sourceLine" id="cb14-62" data-line-number="62"><span class="fu">grep</span> <span class="st">'Input Read Pairs'</span> * <span class="op">&gt;</span> <span class="va">$rst</span>/rst_trim_adapt.txt</a>
+<a class="sourceLine" id="cb14-36" data-line-number="36"><span class="co">## Move bash script to Trimmomatic directory</span></a>
+<a class="sourceLine" id="cb14-37" data-line-number="37"><span class="fu">mv</span> ~/RNAseq_Pipeline/merge_rst_trim_adapters.sh ~/RNAseq_Pipeline/Trimmomatic</a>
+<a class="sourceLine" id="cb14-38" data-line-number="38"></a>
+<a class="sourceLine" id="cb14-39" data-line-number="39"><span class="co"># Check if you have an output for each file</span></a>
+<a class="sourceLine" id="cb14-40" data-line-number="40"><span class="va">pe=$trim</span>/PE</a>
+<a class="sourceLine" id="cb14-41" data-line-number="41"><span class="va">se=$trim</span>/SE</a>
+<a class="sourceLine" id="cb14-42" data-line-number="42"></a>
+<a class="sourceLine" id="cb14-43" data-line-number="43"><span class="co"># Paired</span></a>
+<a class="sourceLine" id="cb14-44" data-line-number="44"><span class="co"># If all jobs generated output you should not get any output.</span></a>
+<a class="sourceLine" id="cb14-45" data-line-number="45"><span class="kw">for</span> <span class="kw">((</span>i=0; i&lt;<span class="va">${#anim[@]}</span> ; i++ <span class="kw">))</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb14-46" data-line-number="46"><span class="fu">ls</span> <span class="va">$pe</span>/<span class="va">${anim[$i]}</span>_R1_merged_PE.fastq <span class="op">&gt;</span> <span class="va">$pe</span>/temp</a>
+<a class="sourceLine" id="cb14-47" data-line-number="47"><span class="fu">ls</span> <span class="va">$pe</span>/<span class="va">${anim[$i]}</span>_R2_merged_PE.fastq <span class="op">&gt;</span> <span class="va">$pe</span>/temp</a>
+<a class="sourceLine" id="cb14-48" data-line-number="48"><span class="kw">done</span>; <span class="fu">rm</span> <span class="va">$pe</span>/temp</a>
+<a class="sourceLine" id="cb14-49" data-line-number="49"></a>
+<a class="sourceLine" id="cb14-50" data-line-number="50"><span class="co"># Single</span></a>
+<a class="sourceLine" id="cb14-51" data-line-number="51"><span class="co"># If all jobs generated output you should not get any output.</span></a>
+<a class="sourceLine" id="cb14-52" data-line-number="52"><span class="kw">for</span> <span class="kw">((</span>i=0; i&lt;<span class="va">${#anim[@]}</span> ; i++ <span class="kw">))</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb14-53" data-line-number="53"><span class="fu">ls</span> <span class="va">$se</span>/<span class="va">${anim[$i]}</span>_R1_merged_SE* <span class="op">&gt;</span> <span class="va">$se</span>/temp</a>
+<a class="sourceLine" id="cb14-54" data-line-number="54"><span class="fu">ls</span> <span class="va">$se</span>/<span class="va">${anim[$i]}</span>_R2_merged_SE* <span class="op">&gt;</span> <span class="va">$se</span>/temp</a>
+<a class="sourceLine" id="cb14-55" data-line-number="55"><span class="kw">done</span>; <span class="fu">rm</span> <span class="va">$se</span>/temp</a>
+<a class="sourceLine" id="cb14-56" data-line-number="56"></a>
+<a class="sourceLine" id="cb14-57" data-line-number="57"><span class="co"># Check if all files completed successfully</span></a>
+<a class="sourceLine" id="cb14-58" data-line-number="58"><span class="co"># If all jobs generated output you should not get any output.</span></a>
+<a class="sourceLine" id="cb14-59" data-line-number="59"><span class="bu">cd</span> <span class="va">$qstat</span></a>
+<a class="sourceLine" id="cb14-60" data-line-number="60"><span class="kw">for</span> <span class="kw">((</span>i=0; i&lt;<span class="va">${#anim[@]}</span> ; i++ <span class="kw">))</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb14-61" data-line-number="61"><span class="bu">echo</span> <span class="kw">`</span><span class="bu">echo</span> -n <span class="st">''</span><span class="va">${anim[$i]}</span><span class="st">' '</span> <span class="kw">;</span>  <span class="fu">grep</span> <span class="st">'TrimmomaticPE: C'</span> <span class="va">${anim[$i]}</span>_*<span class="kw">`</span> <span class="op">&gt;&gt;</span> ../completed.txt</a>
+<a class="sourceLine" id="cb14-62" data-line-number="62"><span class="kw">done</span></a>
 <a class="sourceLine" id="cb14-63" data-line-number="63"></a>
-<a class="sourceLine" id="cb14-64" data-line-number="64"><span class="co"># Creat text file with trimmomatic counts for each animal</span></a>
-<a class="sourceLine" id="cb14-65" data-line-number="65"><span class="va">D=$rst</span>/rst_trim_adapt.txt</a>
-<a class="sourceLine" id="cb14-66" data-line-number="66"><span class="fu">cat</span> <span class="va">$D</span> <span class="kw">|</span> <span class="fu">cut</span> -f1 -d_ <span class="op">&gt;</span> id</a>
-<a class="sourceLine" id="cb14-67" data-line-number="67"><span class="fu">cat</span> <span class="va">$D</span> <span class="kw">|</span> <span class="fu">cut</span> -f4 -d<span class="st">' '</span> <span class="op">&gt;</span> input.read.pairs</a>
-<a class="sourceLine" id="cb14-68" data-line-number="68"><span class="fu">cat</span> <span class="va">$D</span> <span class="kw">|</span> <span class="fu">cut</span> -f7 -d<span class="st">' '</span> <span class="op">&gt;</span> both.surviving</a>
-<a class="sourceLine" id="cb14-69" data-line-number="69"><span class="fu">cat</span> <span class="va">$D</span> <span class="kw">|</span> <span class="fu">cut</span> -f12 -d<span class="st">' '</span> <span class="op">&gt;</span> fwd.only.surviving</a>
-<a class="sourceLine" id="cb14-70" data-line-number="70"><span class="fu">cat</span> <span class="va">$D</span> <span class="kw">|</span> <span class="fu">cut</span> -f17 -d<span class="st">' '</span> <span class="op">&gt;</span> rev.only.surviving</a>
-<a class="sourceLine" id="cb14-71" data-line-number="71"><span class="fu">cat</span> <span class="va">$D</span> <span class="kw">|</span> <span class="fu">cut</span> -f20 -d<span class="st">' '</span> <span class="op">&gt;</span> dropped</a>
-<a class="sourceLine" id="cb14-72" data-line-number="72"></a>
-<a class="sourceLine" id="cb14-73" data-line-number="73"><span class="bu">echo</span> id input.read.pairs both.surviving fwd.only.surviving rev.only.surviving dropped <span class="op">&gt;</span> trimmomatic_rst.txt</a>
-<a class="sourceLine" id="cb14-74" data-line-number="74"><span class="fu">cat</span> trimmomatic_rst.txt <span class="kw">|</span> <span class="fu">tr</span> <span class="st">' '</span> <span class="st">'\t'</span> <span class="op">&gt;</span> tmp<span class="kw">;</span> <span class="fu">mv</span> tmp <span class="va">$rst</span>/trimmomatic_rst.txt</a>
-<a class="sourceLine" id="cb14-75" data-line-number="75"><span class="ex">paste</span> id input.read.pairs both.surviving fwd.only.surviving rev.only.surviving dropped <span class="op">&gt;&gt;</span> <span class="va">$rst</span>/trimmomatic_rst.txt</a>
-<a class="sourceLine" id="cb14-76" data-line-number="76"><span class="fu">rm</span> id input.read.pairs both.surviving fwd.only.surviving rev.only.surviving dropped</a></code></pre></div>
+<a class="sourceLine" id="cb14-64" data-line-number="64"><span class="co"># Merge Results and save to text file</span></a>
+<a class="sourceLine" id="cb14-65" data-line-number="65"><span class="fu">grep</span> <span class="st">'Input Read Pairs'</span> * <span class="op">&gt;</span> <span class="va">$rst</span>/rst_trim_adapt.txt</a>
+<a class="sourceLine" id="cb14-66" data-line-number="66"></a>
+<a class="sourceLine" id="cb14-67" data-line-number="67"><span class="co"># Creat text file with trimmomatic counts for each animal</span></a>
+<a class="sourceLine" id="cb14-68" data-line-number="68"><span class="va">D=$rst</span>/rst_trim_adapt.txt</a>
+<a class="sourceLine" id="cb14-69" data-line-number="69"><span class="fu">cat</span> <span class="va">$D</span> <span class="kw">|</span> <span class="fu">cut</span> -f1 -d_ <span class="op">&gt;</span> id</a>
+<a class="sourceLine" id="cb14-70" data-line-number="70"><span class="fu">cat</span> <span class="va">$D</span> <span class="kw">|</span> <span class="fu">cut</span> -f4 -d<span class="st">' '</span> <span class="op">&gt;</span> input.read.pairs</a>
+<a class="sourceLine" id="cb14-71" data-line-number="71"><span class="fu">cat</span> <span class="va">$D</span> <span class="kw">|</span> <span class="fu">cut</span> -f7 -d<span class="st">' '</span> <span class="op">&gt;</span> both.surviving</a>
+<a class="sourceLine" id="cb14-72" data-line-number="72"><span class="fu">cat</span> <span class="va">$D</span> <span class="kw">|</span> <span class="fu">cut</span> -f12 -d<span class="st">' '</span> <span class="op">&gt;</span> fwd.only.surviving</a>
+<a class="sourceLine" id="cb14-73" data-line-number="73"><span class="fu">cat</span> <span class="va">$D</span> <span class="kw">|</span> <span class="fu">cut</span> -f17 -d<span class="st">' '</span> <span class="op">&gt;</span> rev.only.surviving</a>
+<a class="sourceLine" id="cb14-74" data-line-number="74"><span class="fu">cat</span> <span class="va">$D</span> <span class="kw">|</span> <span class="fu">cut</span> -f20 -d<span class="st">' '</span> <span class="op">&gt;</span> dropped</a>
+<a class="sourceLine" id="cb14-75" data-line-number="75"></a>
+<a class="sourceLine" id="cb14-76" data-line-number="76"><span class="bu">echo</span> id input.read.pairs both.surviving fwd.only.surviving rev.only.surviving dropped <span class="op">&gt;</span> trimmomatic_rst.txt</a>
+<a class="sourceLine" id="cb14-77" data-line-number="77"><span class="fu">cat</span> trimmomatic_rst.txt <span class="kw">|</span> <span class="fu">tr</span> <span class="st">' '</span> <span class="st">'\t'</span> <span class="op">&gt;</span> tmp<span class="kw">;</span> <span class="fu">mv</span> tmp <span class="va">$rst</span>/trimmomatic_rst.txt</a>
+<a class="sourceLine" id="cb14-78" data-line-number="78"><span class="ex">paste</span> id input.read.pairs both.surviving fwd.only.surviving rev.only.surviving dropped <span class="op">&gt;&gt;</span> <span class="va">$rst</span>/trimmomatic_rst.txt</a>
+<a class="sourceLine" id="cb14-79" data-line-number="79"><span class="fu">rm</span> id input.read.pairs both.surviving fwd.only.surviving rev.only.surviving dropped</a></code></pre></div>
 <blockquote>
 <p>Save the script by pressing <code>Ctrl o</code> and <code>enter</code>. To exit press <code>Ctrl x</code>.</p>
 </blockquote>
@@ -479,7 +483,162 @@ First, save the master script to the working directory you created for the RNAse
 <p>This bash script will be run interactively; meaning that it will not be submitted to the scheduler. An error generated from this script will point you to a job that did not generate output. If you get an error rerun the qsub script for that file. Refer to the qstat job output file for further instructions. If the job did not finish in the time allocated or used up more memory than requested you will need to edit the qsub file and increase the requested resorces before resubmitting the job to SLURM.</p>
 <p>Let us review the summary files generated.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="bu">cd</span> /mnt/home/netid/RNAseq_Pipeline/Trimmomatic</a>
-<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="fu">head</span> trimmomatic_rst.txt</a></code></pre></div>
+<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="fu">cat</span> trimmomatic_rst.txt</a></code></pre></div>
+<p>We would expect a high percent of retained paired reads and about less than 2.5% dropped reads in this step. Let us review the percent of retained paired reads and dropped reads.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="bu">cd</span> /mnt/home/netid/RNAseq_Pipeline/Trimmomatic</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="fu">cat</span> rst_trim_adapt.txt <span class="kw">|</span> <span class="fu">cut</span> -f1,8,21 -d<span class="st">' '</span></a></code></pre></div>
+</div>
+<div id="assessing-filtered-read-quality-fastqc" class="section level3">
+<h3>Assessing Filtered Read Quality: FASTQC</h3>
+<p>We have successfully removed Illumina adapter sequences from our RNA-seq data and filtered out low quality bases. Let us review the quality of these filtered reads. We need to first run <code>FASTQC</code> followed by <code>MultiQC</code> to concatenate the FASTQC summaries.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="bu">cd</span> ~/RNAseq_Pipeline</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="fu">nano</span> FastQC_quality_filtered.sh</a></code></pre></div>
+<blockquote>
+<p>Copy the following script and paste in the terminal editor window.</p>
+</blockquote>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="co">#==============================================================================</span></a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="co">#   File: FastQC_quality_filtered.sh</span></a>
+<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="co">#   Directory code: /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered</span></a>
+<a class="sourceLine" id="cb20-4" data-line-number="4"><span class="co">#   Date: January 3, 2020</span></a>
+<a class="sourceLine" id="cb20-5" data-line-number="5"><span class="co">#   Description: Generate FastQC reports for raw sequence reads.</span></a>
+<a class="sourceLine" id="cb20-6" data-line-number="6"><span class="co">#   Run: bash FastQC_Filtered.sh</span></a>
+<a class="sourceLine" id="cb20-7" data-line-number="7"><span class="co">#------------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb20-8" data-line-number="8"><span class="co">#   Input files in directory:</span></a>
+<a class="sourceLine" id="cb20-9" data-line-number="9"><span class="co">#       /mnt/scratch/netid/Trimmomatic</span></a>
+<a class="sourceLine" id="cb20-10" data-line-number="10"><span class="co">#</span></a>
+<a class="sourceLine" id="cb20-11" data-line-number="11"><span class="co">#   Output files to directory:</span></a>
+<a class="sourceLine" id="cb20-12" data-line-number="12"><span class="co">#       /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered</span></a>
+<a class="sourceLine" id="cb20-13" data-line-number="13"><span class="co">#==============================================================================</span></a>
+<a class="sourceLine" id="cb20-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb20-15" data-line-number="15"><span class="co">### Directory input files</span></a>
+<a class="sourceLine" id="cb20-16" data-line-number="16"><span class="va">filter=</span>/mnt/scratch/netid/Trimmomatic</a>
+<a class="sourceLine" id="cb20-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb20-18" data-line-number="18"><span class="co">### Directory output files</span></a>
+<a class="sourceLine" id="cb20-19" data-line-number="19"><span class="co">## Create output directory</span></a>
+<a class="sourceLine" id="cb20-20" data-line-number="20"><span class="fu">mkdir</span> ~/RNAseq_Pipeline/Quality/Filtered</a>
+<a class="sourceLine" id="cb20-21" data-line-number="21"></a>
+<a class="sourceLine" id="cb20-22" data-line-number="22"><span class="co"># Output directory</span></a>
+<a class="sourceLine" id="cb20-23" data-line-number="23"><span class="va">out=</span>/mnt/home/netid/RNAseq_Pipeline/Quality/Filtered</a>
+<a class="sourceLine" id="cb20-24" data-line-number="24"></a>
+<a class="sourceLine" id="cb20-25" data-line-number="25"><span class="co">## Create qstat directory for SLURM input/output files</span></a>
+<a class="sourceLine" id="cb20-26" data-line-number="26"><span class="fu">mkdir</span> ~/RNAseq_Pipeline/Quality/Filtered/qstat</a>
+<a class="sourceLine" id="cb20-27" data-line-number="27"></a>
+<a class="sourceLine" id="cb20-28" data-line-number="28"><span class="co"># SLURM input/output directory</span></a>
+<a class="sourceLine" id="cb20-29" data-line-number="29"><span class="va">qstat=</span>/mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/qstat</a>
+<a class="sourceLine" id="cb20-30" data-line-number="30"></a>
+<a class="sourceLine" id="cb20-31" data-line-number="31"><span class="co"># Animal IDs</span></a>
+<a class="sourceLine" id="cb20-32" data-line-number="32"><span class="bu">cd</span> /mnt/scratch/netid/RAW</a>
+<a class="sourceLine" id="cb20-33" data-line-number="33"><span class="va">anim=(</span><span class="kw">`</span><span class="fu">ls</span> *.fastq <span class="kw">|</span> <span class="fu">cut</span> -f1 -d_ <span class="kw">|</span> <span class="fu">uniq</span><span class="kw">`</span><span class="va">)</span></a>
+<a class="sourceLine" id="cb20-34" data-line-number="34"></a>
+<a class="sourceLine" id="cb20-35" data-line-number="35"><span class="co"># Write bash script for each animal</span></a>
+<a class="sourceLine" id="cb20-36" data-line-number="36"><span class="kw">for</span> <span class="kw">((</span>i=0; i&lt;<span class="va">${#anim[@]}</span> ; i++ <span class="kw">))</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb20-37" data-line-number="37"><span class="bu">echo</span> <span class="st">'#!/bin/bash</span></a>
+<a class="sourceLine" id="cb20-38" data-line-number="38"><span class="st">#SBATCH --nodes=1</span></a>
+<a class="sourceLine" id="cb20-39" data-line-number="39"><span class="st">#SBATCH --cpus-per-task=1</span></a>
+<a class="sourceLine" id="cb20-40" data-line-number="40"><span class="st">#SBATCH --time=04:00:00</span></a>
+<a class="sourceLine" id="cb20-41" data-line-number="41"><span class="st">#SBATCH --mem=10G</span></a>
+<a class="sourceLine" id="cb20-42" data-line-number="42"><span class="st">#SBATCH -J '</span><span class="va">${anim[$i]}</span>_FastQC<span class="st">'</span></a>
+<a class="sourceLine" id="cb20-43" data-line-number="43"><span class="st">#SBATCH -o '</span><span class="va">${anim[$i]}</span>_FastQC.o%j<span class="st">'</span></a>
+<a class="sourceLine" id="cb20-44" data-line-number="44"></a>
+<a class="sourceLine" id="cb20-45" data-line-number="45"><span class="st">module load FastQC</span></a>
+<a class="sourceLine" id="cb20-46" data-line-number="46"></a>
+<a class="sourceLine" id="cb20-47" data-line-number="47"><span class="st"># Change to filtered fastq directory</span></a>
+<a class="sourceLine" id="cb20-48" data-line-number="48"><span class="st">cd '</span><span class="va">$filter</span><span class="st">'</span></a>
+<a class="sourceLine" id="cb20-49" data-line-number="49"></a>
+<a class="sourceLine" id="cb20-50" data-line-number="50"><span class="st"># Generate quality reports for paired reads</span></a>
+<a class="sourceLine" id="cb20-51" data-line-number="51"><span class="st">fastqc --outdir='</span><span class="va">$out</span><span class="st">' ./PE/'</span><span class="va">${anim[$i]}</span><span class="st">'*</span></a>
+<a class="sourceLine" id="cb20-52" data-line-number="52"></a>
+<a class="sourceLine" id="cb20-53" data-line-number="53"><span class="st"># Generate quality reports for paired reads</span></a>
+<a class="sourceLine" id="cb20-54" data-line-number="54"><span class="st">fastqc --outdir='</span><span class="va">$out</span><span class="st">' ./SE/'</span><span class="va">${anim[$i]}</span><span class="st">'*</span></a>
+<a class="sourceLine" id="cb20-55" data-line-number="55"></a>
+<a class="sourceLine" id="cb20-56" data-line-number="56"><span class="st"># qstat</span></a>
+<a class="sourceLine" id="cb20-57" data-line-number="57"><span class="st">scontrol show job $SLURM_JOB_ID'</span> <span class="op">&gt;</span> <span class="va">$qstat</span>/<span class="va">${anim[$i]}</span>_FastQC.qsub</a>
+<a class="sourceLine" id="cb20-58" data-line-number="58"></a>
+<a class="sourceLine" id="cb20-59" data-line-number="59"><span class="co"># Submit job to hpcc</span></a>
+<a class="sourceLine" id="cb20-60" data-line-number="60"><span class="bu">cd</span> <span class="va">$qstat</span></a>
+<a class="sourceLine" id="cb20-61" data-line-number="61"><span class="ex">sbatch</span> <span class="va">${anim[$i]}</span>_FastQC.qsub</a>
+<a class="sourceLine" id="cb20-62" data-line-number="62"></a>
+<a class="sourceLine" id="cb20-63" data-line-number="63"><span class="kw">done</span></a></code></pre></div>
+<blockquote>
+<p>Save the script by pressing <code>Ctrl o</code> and <code>enter</code>. To exit press <code>Ctrl x</code>.</p>
+</blockquote>
+<p>Same as before, the master script points to <code>netid</code> directories. We need to replace <code>netid</code> with your username.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="fu">sed</span> -i <span class="st">'s/netid/username/g'</span> FastQC_quality_filtered.sh</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="fu">bash</span> FastQC_quality_filtered.sh</a></code></pre></div>
+<p>The FASTQC master will create a new directory in your Quality folder called <code>Filtered</code>. Let us take a look at one of the submitted scripts:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="bu">cd</span> ~/RNAseq_Pipeline/Quality/Filtered/qstat</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="fu">cat</span> <span class="kw">`</span><span class="fu">ls</span> *.qsub* <span class="kw">|</span> <span class="fu">tail</span> -1<span class="kw">`</span></a></code></pre></div>
+<p>Check the status of the submitted jobs by using the show jobs shortcut:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="ex">sq</span></a></code></pre></div>
+<p>For now, we wait for the jobs to finish. Only when the <code>sq</code> displays zero running jobs can we proceed to the next step.</p>
+</div>
+<div id="generate-multiqc-report-filtered" class="section level3">
+<h3>Generate MultiQC Report: Filtered</h3>
+<p>Before checking the quality summaries for the raw sequence, files let us first make sure all our jobs ran without errors or warnings. Change to the <code>qstat</code> directory and run <code>checkJobs</code>.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="bu">cd</span> ~/RNAseq_Pipeline/Quality/Filtered/qstat</a>
+<a class="sourceLine" id="cb24-2" data-line-number="2"><span class="fu">bash</span> ~/RNAseq_Pipeline/.checkJobs</a></code></pre></div>
+<p>If the jobs finished with no errors we can proceed to generate the MultiQC report:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="bu">cd</span> ~/RNAseq_Pipeline</a>
+<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="fu">nano</span> multiQC_quality_filtered.sh</a></code></pre></div>
+<blockquote>
+<p>Copy the following script and paste in the terminal editor window.</p>
+</blockquote>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="co">#!/bin/bash</span></a>
+<a class="sourceLine" id="cb26-2" data-line-number="2"><span class="co">#SBATCH --nodes=1</span></a>
+<a class="sourceLine" id="cb26-3" data-line-number="3"><span class="co">#SBATCH --cpus-per-task=1</span></a>
+<a class="sourceLine" id="cb26-4" data-line-number="4"><span class="co">#SBATCH --time=04:00:00</span></a>
+<a class="sourceLine" id="cb26-5" data-line-number="5"><span class="co">#SBATCH --mem=10G</span></a>
+<a class="sourceLine" id="cb26-6" data-line-number="6"><span class="co">#SBATCH -J 'MultiQC'</span></a>
+<a class="sourceLine" id="cb26-7" data-line-number="7"><span class="co">#SBATCH -o '/mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/MultiQC/MultiQC.o%j'</span></a>
+<a class="sourceLine" id="cb26-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb26-9" data-line-number="9"><span class="co">#==============================================================================</span></a>
+<a class="sourceLine" id="cb26-10" data-line-number="10"><span class="co">#   File: multiQC_quality_filtered.sh</span></a>
+<a class="sourceLine" id="cb26-11" data-line-number="11"><span class="co">#   Directory code: /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/MultiQC</span></a>
+<a class="sourceLine" id="cb26-12" data-line-number="12"><span class="co">#   Date: January 3, 2020</span></a>
+<a class="sourceLine" id="cb26-13" data-line-number="13"><span class="co">#   Description: Concatenate FASTQC quality reports into a single file.</span></a>
+<a class="sourceLine" id="cb26-14" data-line-number="14"><span class="co">#   Run: sbatch multiQC_quality_filtered.sh</span></a>
+<a class="sourceLine" id="cb26-15" data-line-number="15"><span class="co">#------------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb26-16" data-line-number="16"><span class="co">#   Input files in directory:</span></a>
+<a class="sourceLine" id="cb26-17" data-line-number="17"><span class="co">#       /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered</span></a>
+<a class="sourceLine" id="cb26-18" data-line-number="18"><span class="co">#</span></a>
+<a class="sourceLine" id="cb26-19" data-line-number="19"><span class="co">#   Output files to directory:</span></a>
+<a class="sourceLine" id="cb26-20" data-line-number="20"><span class="co">#       /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/MultiQC</span></a>
+<a class="sourceLine" id="cb26-21" data-line-number="21"><span class="co">#==============================================================================</span></a>
+<a class="sourceLine" id="cb26-22" data-line-number="22"></a>
+<a class="sourceLine" id="cb26-23" data-line-number="23"><span class="co">### Directory input files</span></a>
+<a class="sourceLine" id="cb26-24" data-line-number="24"><span class="fu">mkdir</span> /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/output</a>
+<a class="sourceLine" id="cb26-25" data-line-number="25"><span class="va">Qrep=</span>/mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/output</a>
+<a class="sourceLine" id="cb26-26" data-line-number="26"><span class="fu">mv</span> /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/*.zip <span class="va">$Qrep</span></a>
+<a class="sourceLine" id="cb26-27" data-line-number="27"></a>
+<a class="sourceLine" id="cb26-28" data-line-number="28"><span class="co">### Directory output files</span></a>
+<a class="sourceLine" id="cb26-29" data-line-number="29"><span class="co">## Create MultiQC output directory</span></a>
+<a class="sourceLine" id="cb26-30" data-line-number="30"><span class="fu">mkdir</span> /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/MultiQC</a>
+<a class="sourceLine" id="cb26-31" data-line-number="31"></a>
+<a class="sourceLine" id="cb26-32" data-line-number="32"><span class="co"># Output directory</span></a>
+<a class="sourceLine" id="cb26-33" data-line-number="33"><span class="va">QC=</span>/mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/MultiQC</a>
+<a class="sourceLine" id="cb26-34" data-line-number="34"></a>
+<a class="sourceLine" id="cb26-35" data-line-number="35"><span class="co">#' Activate virtual environment</span></a>
+<a class="sourceLine" id="cb26-36" data-line-number="36"><span class="bu">cd</span> /mnt/home/netid/RNAseq_Pipeline/Quality/Raw/MultiQC</a>
+<a class="sourceLine" id="cb26-37" data-line-number="37"><span class="bu">source</span> QC/bin/activate</a>
+<a class="sourceLine" id="cb26-38" data-line-number="38"></a>
+<a class="sourceLine" id="cb26-39" data-line-number="39"><span class="co"># Generate a summary file</span></a>
+<a class="sourceLine" id="cb26-40" data-line-number="40"><span class="bu">cd</span> <span class="va">$QC</span></a>
+<a class="sourceLine" id="cb26-41" data-line-number="41"><span class="ex">multiqc</span> <span class="va">$Qrep</span></a>
+<a class="sourceLine" id="cb26-42" data-line-number="42"><span class="ex">deactivate</span></a>
+<a class="sourceLine" id="cb26-43" data-line-number="43"></a>
+<a class="sourceLine" id="cb26-44" data-line-number="44"><span class="co"># Move bash script to work directory</span></a>
+<a class="sourceLine" id="cb26-45" data-line-number="45"><span class="fu">mv</span> ~/RNAseq_Pipeline/multiQC_quality_filtered.sh <span class="va">$QC</span></a>
+<a class="sourceLine" id="cb26-46" data-line-number="46"></a>
+<a class="sourceLine" id="cb26-47" data-line-number="47"><span class="co"># Job details</span></a>
+<a class="sourceLine" id="cb26-48" data-line-number="48"><span class="ex">scontrol</span> show job <span class="va">$SLURM_JOB_ID</span></a></code></pre></div>
+<blockquote>
+<p>Replace <code>netid</code> with your username.</p>
+</blockquote>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="fu">sed</span> -i <span class="st">'s/netid/username/g'</span> multiQC_quality_filtered.sh</a></code></pre></div>
+<p>Now you can run MultiQC on the filtered FASTQ files.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="bu">cd</span> ~/RNAseq_pipeline/</a>
+<a class="sourceLine" id="cb28-2" data-line-number="2"><span class="ex">sbatch</span> multiQC_raw.sh</a></code></pre></div>
+<p>Download the MultiQC report for quality filtered reads and compare with the previous MultiQC report generated for the raw sequence reads. You should see an improvement in the base quality phred scores and see no adpater sequences.</p>
 <p>I hope you enjoyed this tutorial. Send any comments or suggestions to <a href="mailto:velezdeb@msu.edu">velezdeb@msu.edu</a>.</p>
 </div>
 </div><!-- /.entry-content -->
