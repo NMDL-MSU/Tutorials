@@ -214,7 +214,7 @@ mkdir $HOME/RNAseq_Pipeline/Trimmomatic/qstat
 qstat=$HOME/RNAseq_Pipeline/Trimmomatic/qstat
 
 # Paired end reads directory
-mkdir $SCRATCH/netid/Trimmomatic/PE
+mkdir $SCRATCH/Trimmomatic/PE
 pe=$SCRATCH/Trimmomatic/PE
 
 # Single end reads directory
@@ -273,7 +273,7 @@ When all jobs have finished run the checkjobs within the `qstat` directory
 to make sure the jobs ran with no errors. 
 
 ```bash
-cd /mnt/scratch/netid/Trimmomatic/qstat
+cd $HOME/Trimmomatic/qstat
 checkJobs
 ```
 
@@ -605,6 +605,5 @@ report generated for the raw sequence reads. You should see an improvement in th
 phred scores and see no adpater sequences.
 
 I hope you enjoyed this tutorial. Send any comments or suggestions to velezdeb@msu.edu.
-
 
 

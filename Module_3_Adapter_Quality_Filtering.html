@@ -324,7 +324,7 @@ Drop reads with a minumin length of 75 bases.</p>
 <a class="sourceLine" id="cb6-31" data-line-number="31"><span class="va">qstat=$HOME</span>/RNAseq_Pipeline/Trimmomatic/qstat</a>
 <a class="sourceLine" id="cb6-32" data-line-number="32"></a>
 <a class="sourceLine" id="cb6-33" data-line-number="33"><span class="co"># Paired end reads directory</span></a>
-<a class="sourceLine" id="cb6-34" data-line-number="34"><span class="fu">mkdir</span> <span class="va">$SCRATCH</span>/netid/Trimmomatic/PE</a>
+<a class="sourceLine" id="cb6-34" data-line-number="34"><span class="fu">mkdir</span> <span class="va">$SCRATCH</span>/Trimmomatic/PE</a>
 <a class="sourceLine" id="cb6-35" data-line-number="35"><span class="va">pe=$SCRATCH</span>/Trimmomatic/PE</a>
 <a class="sourceLine" id="cb6-36" data-line-number="36"></a>
 <a class="sourceLine" id="cb6-37" data-line-number="37"><span class="co"># Single end reads directory</span></a>
@@ -373,7 +373,7 @@ Drop reads with a minumin length of 75 bases.</p>
 <p>Submit the master script for Trimmomatic to the SLURM scheduler.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="fu">bash</span> <span class="va">$HOME</span>/RNAseq_Pipeline/adapter_trimming.sh</a></code></pre></div>
 <p>This step should take about an hour to run. Wait until all jobs have finished before continuing to the step. To check the jobs status use <code>qs</code>. When all jobs have finished run the checkjobs within the <code>qstat</code> directory to make sure the jobs ran with no errors.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="bu">cd</span> /mnt/scratch/netid/Trimmomatic/qstat</a>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="bu">cd</span> <span class="va">$HOME</span>/Trimmomatic/qstat</a>
 <a class="sourceLine" id="cb8-2" data-line-number="2"><span class="ex">checkJobs</span></a></code></pre></div>
 </div>
 <div id="generate-summary-for-quality-trimming" class="section level3">
