@@ -173,6 +173,7 @@ code span.ot { color: #007020; }
 <div id="obtain-depth-of-coverage" class="section level3">
 <h3>Obtain depth of coverage</h3>
 <p>Before builing the transcriptome, we should get an average estimate of the depth of coverage per animal. The average depth of coverage (focusing on covered bases) is a ratio of the total number of counts per covered regions over the total number of nucleotides sequenced. This will be estimated per bam file using Samtools. Another estimate of coverage is the average X coverage were instead of dividing by the total number of nucleotides sequenced, you divide by the total genome size.</p>
+<p>Samtools has several utilities for sequence alignment and mapping for SAM/BAM format. It is also commonly used to call variants from RNAseq data. The <a href="http://www.htslib.org/doc/samtools.1.html">SamTools Mannual</a> can be of use if you wish to look at specific regions in your BAM files or merge files together. The SAM flag in <code>samtools view</code> is used to index your reads based on certain properties, such as read first pair, read mapped in proper pair, read rever strand or any combination. The <a href="https://broadinstitute.github.io/picard/explain-flags.html">Picard flags page</a> is a great resource to obtain a SAM Flag based on user specified properties. In this tutorial we will use samtools to calculate dapth of coverage.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="fu">nano</span> <span class="va">$HOME</span>/RNAseq_Pipeline/depth.sh</a></code></pre></div>
 <blockquote>
 <p>Copy the following script and paste in the terminal editor window.</p>
@@ -185,7 +186,7 @@ code span.ot { color: #007020; }
 <a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#   Run: bash depth.sh</span></a>
 <a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#------------------------------------------------------------------------------</span></a>
 <a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#   Input files in directory:</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#       $SCRATCH/HISTAT2</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#       $SCRATCH/HISAT2</span></a>
 <a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#</span></a>
 <a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#   Output files to directory:</span></a>
 <a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#       $HOME/RNAseq_Pipeline/Depth</span></a>
@@ -196,7 +197,7 @@ code span.ot { color: #007020; }
 <a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#==============================================================================</span></a>
 <a class="sourceLine" id="cb3-18" data-line-number="18"></a>
 <a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co"># Input Directory</span></a>
-<a class="sourceLine" id="cb3-20" data-line-number="20"><span class="va">dir=$SCRATCH</span>/HISTAT2</a>
+<a class="sourceLine" id="cb3-20" data-line-number="20"><span class="va">dir=$SCRATCH</span>/HISAT2</a>
 <a class="sourceLine" id="cb3-21" data-line-number="21"></a>
 <a class="sourceLine" id="cb3-22" data-line-number="22"><span class="co"># Output Directory</span></a>
 <a class="sourceLine" id="cb3-23" data-line-number="23"><span class="fu">mkdir</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth</a>

@@ -46,6 +46,14 @@ This will be estimated per bam file using Samtools. Another estimate of coverage
 average X coverage were instead of dividing by the total number of nucleotides sequenced, you
 divide by the total genome size.
 
+Samtools has several utilities for sequence alignment and mapping for SAM/BAM format. 
+It is also commonly used to call variants from RNAseq data. The [SamTools Mannual](http://www.htslib.org/doc/samtools.1.html)
+can be of use if you wish to look at specific regions in your BAM files or merge files 
+together. The SAM flag in `samtools view` is used to index your reads based on certain properties,
+such as read first pair, read mapped in proper pair, read rever strand or any combination. 
+The [Picard flags page](https://broadinstitute.github.io/picard/explain-flags.html) is a great resource to 
+obtain a SAM Flag based on user specified properties. In this tutorial we will use samtools to 
+calculate dapth of coverage. 
 
 ```bash
 nano $HOME/RNAseq_Pipeline/depth.sh
@@ -62,7 +70,7 @@ nano $HOME/RNAseq_Pipeline/depth.sh
 #   Run: bash depth.sh
 #------------------------------------------------------------------------------
 #   Input files in directory:
-#       $SCRATCH/HISTAT2
+#       $SCRATCH/HISAT2
 #
 #   Output files to directory:
 #       $HOME/RNAseq_Pipeline/Depth
@@ -73,7 +81,7 @@ nano $HOME/RNAseq_Pipeline/depth.sh
 #==============================================================================
 
 # Input Directory
-dir=$SCRATCH/HISTAT2
+dir=$SCRATCH/HISAT2
 
 # Output Directory
 mkdir $HOME/RNAseq_Pipeline/Depth
@@ -147,4 +155,5 @@ The depth per chromosome was also calculated per animal. These text files were s
 cd $HOME/RNAseq_Pipeline/Depth/Chrom
 cat `ls *_uniq_chr_depth.txt | head -1`
 ```
+
 
