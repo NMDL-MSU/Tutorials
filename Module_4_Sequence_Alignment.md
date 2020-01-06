@@ -316,8 +316,8 @@ mkdir $ref/Index
 index=$ref/Index
 
 # Reference genome file
-fl=$ref/*.fa
-nm=(`ls $fl | cut -f1 -d.`)
+cd $ref
+nm=(`ls *.fa | cut -f1 -d.`)
 
 ### Write qsub script and submit to HPCC
 echo '#!/bin/bash
@@ -337,7 +337,7 @@ module list
 
 # Index Genome
 cd '$index'
-hisat2-build -p 10 '$fl' Index_'$nm'
+hisat2-build -p 10 '$ref/$nm' Index_'$nm'
 
 # qstat
 scontrol show job $SLURM_JOB_ID' > $index/Index.qsub
@@ -680,6 +680,5 @@ head $HOME/RNAseq_Pipeline/HISAT2/summary_alignment.txt
 ```
 
 I hope you enjoyed this tutorial. Send any comments or suggestions to velezdeb@msu.edu.
-
 
 
