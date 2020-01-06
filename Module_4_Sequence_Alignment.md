@@ -317,7 +317,7 @@ index=$ref/Index
 
 # Reference genome file
 fl=$ref/*.fa
-nm=(`ls *.fa | cut -f1 -d.`)
+nm=(`ls $fl | cut -f1 -d.`)
 
 ### Write qsub script and submit to HPCC
 echo '#!/bin/bash
@@ -680,5 +680,6 @@ head $HOME/RNAseq_Pipeline/HISAT2/summary_alignment.txt
 ```
 
 I hope you enjoyed this tutorial. Send any comments or suggestions to velezdeb@msu.edu.
+
 
 
