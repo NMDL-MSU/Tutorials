@@ -538,7 +538,8 @@ To review all the output files, check for errors, and obtain run summary, use my
 check jobs script. Within the qstat directory run the following command:
 
 ```bash
-bash $HOME/.checkJobs
+cd $HOME/RNAseq_Pipeline/Quality/Raw/qstat
+checkJobs
 ```
 
 This script will look for errors or warnings in job outputs and print it to the command line. 
