@@ -384,7 +384,7 @@ that have strand specific information. The options selected are:
 > `--rna-strandness RF` specifies the strand-specific information as `R` first strand (or reverse complement)
 > and `F` the second strand (or transcript).  
 > `--met-stderr` saves the metrics report to the "standard error" output file
-> `--dta-cufflinks` report strand inforamation for every spliced alignment (XS:A[+-]) 
+> `--dta-cufflinks` report strand inforamation for every spliced alignment (XS:A[+-])  
 > `-p 8` parallel search threads, in this case 8  
 > `-x` basename of the index for the reference genome  
 > `-1` mate 1 fastq file  
@@ -699,6 +699,5 @@ head $HOME/RNAseq_Pipeline/HISAT2/summary_alignment.txt
 ```
 
 I hope you enjoyed this tutorial. Send any comments or suggestions to velezdeb@msu.edu.
-
 
 
