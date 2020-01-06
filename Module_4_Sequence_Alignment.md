@@ -439,7 +439,7 @@ mkdir $dir/qstat
 qstat=$dir/qstat
 
 # Move script to directory
-mv $HOME/RNAseq_Pipeline/hisat_align_reads.sh $dir
+mv $HOME/RNAseq_Pipeline/hisat2_align_reads.sh $dir
 
 # Write bash script for each animal
 for ((i=0; i<${#anim[@]} ; i++ )) do
