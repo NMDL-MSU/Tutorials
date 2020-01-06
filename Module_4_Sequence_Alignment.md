@@ -382,7 +382,7 @@ that have strand specific information. The options selected are:
 
 > `-q` refering to fastq files  
 > `--phred33` input qualities are ASCII chars equal to phred33 quality scores (Illumina)  
-> `--rna-strandness RF` specifies the strand-specific information as `R` first strand (or reverse complement)  
+> `--rna-strandness RF` specifies the strand-specific information as `R` first strand (or reverse complement)
 > and `F` the second strand (or transcript)   
 > `--met-stderr` saves the metrics report to the "standard error" output file  
 > `--dta-cufflinks` report strand inforamation for every spliced alignment (XS:A[+-])  
