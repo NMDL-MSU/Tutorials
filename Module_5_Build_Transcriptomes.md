@@ -130,7 +130,7 @@ bash $HOME/RNAseq_Pipeline/Depth/depth.sh
 This script will run interactively in your terminal by using a `for` loop. Once finished
 review the average coverage per seuqenced base:
 
-``bash
+```bash
 less $HOME/RNAseq_Pipeline/Depth/uniq_depth.txt
 ```
 

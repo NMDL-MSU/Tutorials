@@ -247,12 +247,12 @@ code span.ot { color: #007020; }
 </blockquote>
 <div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="fu">bash</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth/depth.sh</a></code></pre></div>
 <p>This script will run interactively in your terminal by using a <code>for</code> loop. Once finished review the average coverage per seuqenced base:</p>
-<p>``bash less $HOME/RNAseq_Pipeline/Depth/uniq_depth.txt ```</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="fu">less</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth/uniq_depth.txt</a></code></pre></div>
 <p>And the average X coverage</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="fu">less</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth/uniq_X_coverage.txt</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="fu">less</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth/uniq_X_coverage.txt</a></code></pre></div>
 <p>The depth per chromosome was also calculated per animal. These text files were saved in the <code>Chrom</code> directory.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="bu">cd</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth/Chrom</a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="fu">cat</span> <span class="kw">`</span><span class="fu">ls</span> *_uniq_chr_depth.txt <span class="kw">|</span> <span class="fu">head</span> -1<span class="kw">`</span></a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="bu">cd</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth/Chrom</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="fu">cat</span> <span class="kw">`</span><span class="fu">ls</span> *_uniq_chr_depth.txt <span class="kw">|</span> <span class="fu">head</span> -1<span class="kw">`</span></a></code></pre></div>
 </div>
 </div><!-- /.entry-content -->
 </article>
