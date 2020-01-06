@@ -1,7 +1,7 @@
 ---
 title: Adapter and Quality Filtering
 author: Deborah Velez-Irizarry
-date: Updated Jan 3 2020
+date: Updated Jan 6 2020
 output:
   prettydoc::html_pretty:
     theme: hpstr
@@ -12,28 +12,35 @@ output:
 
 
 ### Description
-In this tutorial, we will cover Illumina adapter trimming and quality filtering. Before we start this step we will need to merge fastq files per animal.
+In this tutorial, we will cover Illumina adapter trimming and quality 
+filtering. Before we start this step we will need to merge fastq files 
+per animal.
+
+![](https://user-images.githubusercontent.com/44003875/71802462-bb296280-302b-11ea-99fd-093405ec441b.png)
 
 ### Connect to HPC system
-If you are using Ubuntu, open up the terminal with `Ctrl`+`Alt`+`T`. From the command line, log in to HPC using ssh. 
+If you are using Ubuntu, open up the terminal with `Ctrl`+`Alt`+`T`. 
+From the command line, log in to HPC using ssh. 
 
 **SSH **
 ```bash
 ssh -YX username@gateway.hpcc.msu.edu
 ```
 
-If you are using the remote desktop environment login to your terminal through the Web-based remote desktop:
-[Web site access to HPCC](https://wiki.hpcc.msu.edu/display/ITH/Web+Site+Access+to+HPCC)
+If you are using the remote desktop environment login to your terminal 
+through the Web-based remote desktop: [Web site access to HPCC](https://wiki.hpcc.msu.edu/display/ITH/Web+Site+Access+to+HPCC)
 
 ### Merge Fasta files
-In our example we ran a second lane to increase the number of reads per animal so we will need to merge these extra reads for the first and second strand seperately.
-If you do not have multiple sequence runs per animal you can skip this step. 
+In our example we ran a second lane to increase the number of reads per 
+animal so we will need to merge these extra reads for the first and second 
+strand seperately. If you do not have multiple sequence runs per animal 
+you can skip this step. 
 
-First, save the master script to the working directory you created for the RNAseq pipeline tutorial.
+First, save the master script to the working directory you created for 
+the RNAseq pipeline.
 
 ```bash
-cd ~/RNAseq_Pipeline
-nano Merge_RNASeq_reads_per_animal.sh
+nano $HOME/RNAseq_Pipeline/Merge_RNASeq_reads_per_animal.sh
 ```
 
 > Copy the following script and paste in the terminal editor window.
@@ -41,33 +48,33 @@ nano Merge_RNASeq_reads_per_animal.sh
 ```bash
 #======================================================================
 #   Script: Merge_RNASeq_reads_per_animal.sh
-#   Directory Code: /mnt/home/netid/RNAseq_Pipeline/Merged
-#   Date: January 3, 2020
+#   Directory Code: $HOME/RNAseq_Pipeline/Merged
+#   Date: January 6, 2020
 #   Description: Merge RNA-Seq reads for each animal into
 #          a single fastq file.
 #   Run: bash Merge_RNASeq_reads_per_animal.sh
 #----------------------------------------------------------------------
 #   Input files in directory:
-#       /mnt/scratch/netid/RAW/*fastq
+#       $SCRATCH/RAW/*fastq
 #
 #   Output files to scratch directory:
-#       /mnt/scratch/netid/Merged/*fastq
+#       $SCRATCH/Merged/*fastq
 #======================================================================
 
 # Directory of fastq files
-Raw=/mnt/scratch/netid/RAW
+Raw=$SCRATCH/RAW
 
 # Directory for merged fastq files
-mkdir /mnt/home/netid/RNAseq_Pipeline/Merged
-mkdir /mnt/scratch/netid/Merged
-Merg=/mnt/scratch/netid/Merged
+mkdir $HOME/RNAseq_Pipeline/Merged
+mkdir $SCRATCH/Merged
+Merg=$SCRATCH/Merged
 
 # Batch script statistics directory
-mkdir /mnt/home/netid/RNAseq_Pipeline/Merged/qstat
-qstat=/mnt/home/netid/RNAseq_Pipeline/Merged/qstat
+mkdir $HOME/RNAseq_Pipeline/Merged/qstat
+qstat=$HOME/RNAseq_Pipeline/Merged/qstat
 
 # Move script to work directory
-mv ~/RNAseq_Pipeline/Merge_RNASeq_reads_per_animal.sh $Merg
+mv $HOME/RNAseq_Pipeline/Merge_RNASeq_reads_per_animal.sh $HOME/RNAseq_Pipeline/Merged
 
 # Animal IDs
 cd $Raw
@@ -114,30 +121,20 @@ done
 
 > Save the script by pressing `Ctrl o` and `enter`. To exit press `Ctrl x`.
 
-The master script points to `netid` directories. We need to replace `netid` with your username. Copy the following command to the terminal and replace `username` with your netid before hitting `enter`.
+Run the Merge master script with `bash`:
 
 ```bash
-sed -i 's/netid/username/g' Merge_RNASeq_reads_per_animal.sh
+bash $HOME/RNAseq_Pipeline/Merge_RNASeq_reads_per_animal.sh
 ```
 
-Check that the directories in your master script contain your username.
-
-```bash
-less Merge_RNASeq_reads_per_animal.sh
-```
-If the directories are correct, run the Merge master script with `bash`:
-
-```bash
-bash Merge_RNASeq_reads_per_animal.sh
-```
-
-This script will create a directory in your scratch space called Merged. The merged fasta files will be saved to this directory.
+This script will create a directory in your scratch space called Merged. 
+The merged fasta files will be saved to this directory.
 
 
 ### Trimmomatic
 
-Trimmomatic is a flexable read trimming tool created for Illumina next-generation sequencing data. 
-To learn more about Trimmomatic refer to:
+Trimmomatic is a flexable read trimming tool created for Illumina 
+next-generation sequencing data. To learn more about Trimmomatic refer to:
 
 > Bolger, A.M., Lohse, M., &amp; Usadel, B. (2014). [Trimmomatic: A flexible trimmer for Illumina Sequence Data.](https://www.ncbi.nlm.nih.gov/pubmed/24695404) Bioinformatics, btu170.  
 > [Trimmomatic Website](http://www.usadellab.org/cms/index.php?page=trimmomatic)  
@@ -146,7 +143,8 @@ To learn more about Trimmomatic refer to:
 The parameters used to performe this step are as follows:
 
 **ILLUMINACLIP:**  
-Cuts the Illumina-sequence specific adapters. We will trim the TruSeq3-PE adapter sequences shown below.
+Cuts the Illumina-sequence specific adapters. We will trim the TruSeq3-PE 
+adapter sequences shown below.
 
 > PrefixPE/1 TACACTCTTTCCCTACACGACGCTCTTCCGATCT  
 > PrefixPE/2 GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT  
@@ -156,7 +154,8 @@ Cuts the Illumina-sequence specific adapters. We will trim the TruSeq3-PE adapte
 > PE2_rc AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC  
 
 **HEADCROP**  
-Cut a specific number of bases from the start of the read. We will trim the first 6 bases.
+Cut a specific number of bases from the start of the read. We will trim 
+the first 6 bases.
 
 **LEADING**  
 Cut the leading bases only if below a quality of 3
@@ -165,17 +164,18 @@ Cut the leading bases only if below a quality of 3
 Cut the trailing bases only if below a quality of 3
 
 **SLIDINGWINDOW**  
-Sliding window to scan read, we will use a 4-base window and trim if the average quality is below 15. 
+Sliding window to scan read, we will use a 4-base window and trim if the 
+average quality is below 15. 
 
 **MINLEN**  
 Drop reads with a minumin length of 75 bases.
 
   
-First, save the master script to the working directory you created for the RNAseq pipeline tutorial.
+First, save the master script to the working directory you created for 
+the RNAseq pipeline tutorial.
 
 ```bash
-cd ~/RNAseq_Pipeline
-nano adapter_trimming.sh
+nano $HOME/RNAseq_Pipeline/adapter_trimming.sh
 ```
 
 > Copy the following script and paste in the terminal editor window.
@@ -183,21 +183,21 @@ nano adapter_trimming.sh
 ```bash
 #======================================================================
 #   File: adapter_trimming.sh
-#   Directory code: /mnt/home/netid/RNAseq_Pipeline/Trimmomatic
-#   Date: January 3, 2020
+#   Directory code: $HOME/RNAseq_Pipeline/Trimmomatic
+#   Date: January 6, 2020
 #   Description: Trim adapter sequences using Trimmomatic software
 #   Run: bash adapter_trimming.sh
 #----------------------------------------------------------------------
 #   Input files in directory:
-#       /mnt/scratch/netid/Merged/*fastq
+#       $SCRATCH/Merged/*fastq
 #
 #   Output files to directories in scratch:
-#       /mnt/scratch/netid/Trimmomatic/PE
-#       /mnt/scratch/netid/Trimmomatic/SE
+#       $SCRATCH/Trimmomatic/PE
+#       $SCRATCH/Trimmomatic/SE
 #======================================================================
 
 ### Raw RNA-seq Directory
-raw=/mnt/scratch/netid/Merged
+raw=$SCRATCH/Merged
 
 ### Animal IDs
 cd $raw
@@ -205,24 +205,24 @@ anim=(`ls *.fastq | cut -f1 -d_ | uniq`)
 
 ### Output directories
 # Trimmomatic directory
-mkdir /mnt/home/netid/RNAseq_Pipeline/Trimmomatic
-mkdir /mnt/scratch/netid/Trimmomatic
-trim=/mnt/scratch/netid/Trimmomatic
+mkdir $HOME/RNAseq_Pipeline/Trimmomatic
+mkdir $SCRATCH/Trimmomatic
+trim=$SCRATCH/Trimmomatic
 
 # Bash qstatistics directory
-mkdir /mnt/home/netid/RNAseq_Pipeline/Trimmomatic/qstat
-qstat=/mnt/home/netid/RNAseq_Pipeline/Trimmomatic/qstat
+mkdir $HOME/RNAseq_Pipeline/Trimmomatic/qstat
+qstat=$HOME/RNAseq_Pipeline/Trimmomatic/qstat
 
 # Paired end reads directory
-mkdir /mnt/scratch/netid/Trimmomatic/PE
-pe=/mnt/scratch/netid/Trimmomatic/PE
+mkdir $SCRATCH/netid/Trimmomatic/PE
+pe=$SCRATCH/Trimmomatic/PE
 
 # Single end reads directory
-mkdir /mnt/scratch/netid/Trimmomatic/SE
-se=/mnt/scratch/netid/Trimmomatic/SE
+mkdir $SCRATCH/Trimmomatic/SE
+se=$SCRATCH/Trimmomatic/SE
 
 ## Move bash script to work directory
-mv ~/RNAseq_Pipeline/adapter_trimming.sh ~/RNAseq_Pipeline/Trimmomatic
+mv $HOME/RNAseq_Pipeline/adapter_trimming.sh $HOME/RNAseq_Pipeline/Trimmomatic
 
 
 ### Generate bash scripts to run trimmomatic per animal
@@ -261,48 +261,46 @@ done
 
 > Save the script by pressing `Ctrl o` and `enter`. To exit press `Ctrl x`.
 
-Replace the master script `netid` with your username. Copy the following command to the terminal and replace `username` with your netid before hitting `enter`.
+Submit the master script for Trimmomatic to the SLURM scheduler.
 
 ```bash
-sed -i 's/netid/username/g' adapter_trimming.sh
+bash $HOME/RNAseq_Pipeline/adapter_trimming.sh
 ```
 
-Now you can run submit the master script for Trimmomatic to the SLURM scheduler.
-
-```bash
-bash adapter_trimming.sh
-```
-
-This step should take about an hour to run. Wait until all jobs have finished before continuing to the step.
-To check the jobs status use `qs`. When all jobs have finished run the checkjobs within the `qstat` directory 
+This step should take about an hour to run. Wait until all jobs have 
+finished before continuing to the step. To check the jobs status use `qs`. 
+When all jobs have finished run the checkjobs within the `qstat` directory 
 to make sure the jobs ran with no errors. 
 
 ```bash
 cd /mnt/scratch/netid/Trimmomatic/qstat
-bash ~/RNAseq_Pipeline/.checkJobs
+checkJobs
 ```
 
 ### Generate summary for quality trimming
 
-To keep a complete documentation of retained and dropped reads we will create a summary file for each step in the RNA-seq 
-bioinformatic pipeline. We will extract this information from the job outfiles (one per animal or animal-timepoint sepending 
-on the experimental design). Let us look at how this information is provided by Trimmomatic:
+To keep a complete documentation of retained and dropped reads we will 
+create a summary file for each step in the RNA-seq bioinformatic pipeline. 
+We will extract this information from the job outfiles (one per animal or 
+animal-timepoint depending on the experimental design). Let us look at how 
+this information is provided by Trimmomatic:
 
 ```bash
-cd /mnt/scratch/netid/Trimmomatic/qstat
+cd $SCRATCH/Trimmomatic/qstat
 cat `ls | grep -v qsub | head -1`
 ```
 
-Observe the number provided for `Input Read Pair`, `Both Surviving`, `Forward Only Surviving`, 
-`Reverse Only Surviving`, and `Dropped`. Notice that this quality step generates both paired and single 
-reads. This happens when the trimming results in a complete loss of one of the read paires.
-We will extract this information for each of the jobs submitted and save it to a tab delimited matrix 
-that we will use at the end of the pipeline to asses retained and loss reads. 
+Observe the number provided for `Input Read Pair`, `Both Surviving`, 
+`Forward Only Surviving`, `Reverse Only Surviving`, and `Dropped`. 
+Notice that this quality step generates both paired and single 
+reads. This happens when the trimming results in a complete loss of one 
+of the read paires. We will extract this information for each of the jobs 
+submitted and save it to a tab delimited matrix that we will use at the 
+end of the pipeline to asses retained and loss reads. 
 
 
 ```bash
-cd ~/RNAseq_Pipeline
-nano merge_rst_trim_adapters.sh
+nano $HOME/RNAseq_Pipeline/merge_rst_trim_adapters.sh
 ```
 
 > Copy the following script and paste in the terminal editor window.
@@ -310,17 +308,17 @@ nano merge_rst_trim_adapters.sh
 ```bash
 #===================================================================
 #   File: merge_rst_trim_adapters.sh
-#   Directory: /mnt/home/netid/RNAseq_Pipeline/Trimmomatic
-#   Date: January 3, 2020
+#   Directory: $HOME/RNAseq_Pipeline/Trimmomatic
+#   Date: January 6, 2020
 #   Description: Check that all files were properly trimmed and merge
 #                all the results.
 #   Run: bash merge_rst_trim_adapters.sh
 #-------------------------------------------------------------------
 #   Input files in directory:
-#       /mnt/home/netid/RNAseq_Pipeline/Trimmomatic/qstat
+#       $HOME/RNAseq_Pipeline/Trimmomatic/qstat
 #
 #   Output file to directory:
-#       /mnt/home/netid/RNAseq_Pipeline/Trimmomatic
+#       $HOME/RNAseq_Pipeline/Trimmomatic
 #
 #   Output file:
 #       rst_trim_adapt.txt
@@ -328,23 +326,23 @@ nano merge_rst_trim_adapters.sh
 #====================================================================
 
 ### Raw RNA-seq Directory
-raw=/mnt/scratch/netid/RAW
+raw=$SCRATCH/RAW
 
 ### Animal IDs
 cd $raw
 anim=(`ls *.fastq | cut -f1 -d_ | uniq`)
 
 ### Output directory
-trim=/mnt/scratch/netid/Trimmomatic
+trim=/$SCRATCH/Trimmomatic
 
 ### Input directory
-rst=/mnt/home/netid/RNAseq_Pipeline/Trimmomatic
+rst=$HOME/RNAseq_Pipeline/Trimmomatic
 
 ### Qstat directory
-qstat=/mnt/home/netid/RNAseq_Pipeline/Trimmomatic/qstat
+qstat=$HOME/RNAseq_Pipeline/Trimmomatic/qstat
 
 ## Move bash script to Trimmomatic directory
-mv ~/RNAseq_Pipeline/merge_rst_trim_adapters.sh ~/RNAseq_Pipeline/Trimmomatic
+mv $HOME/RNAseq_Pipeline/merge_rst_trim_adapters.sh $HOME/RNAseq_Pipeline/Trimmomatic
 
 # Check if you have an output for each file
 pe=$trim/PE
@@ -391,16 +389,10 @@ rm id input.read.pairs both.surviving fwd.only.surviving rev.only.surviving drop
 
 > Save the script by pressing `Ctrl o` and `enter`. To exit press `Ctrl x`.
 
-Replace the master script `netid` with your username. Copy the following command to the terminal and replace `username` with your netid before hitting `enter`.
+Run the script using bash. 
 
 ```bash
-sed -i 's/netid/username/g' merge_rst_trim_adapters.sh
-```
-
-Now you can run the script using bash. 
-
-```bash
-bash adapter_trimming.sh
+bash $HOME/RNAseq_Pipeline/merge_rst_trim_adapters.sh
 ```
 
 This bash script will be run interactively; meaning that it will not be submitted to the 
@@ -413,7 +405,7 @@ before resubmitting the job to SLURM.
 Let us review the summary files generated.
 
 ```bash
-cd /mnt/home/netid/RNAseq_Pipeline/Trimmomatic
+cd $HOME/RNAseq_Pipeline/Trimmomatic
 cat trimmomatic_rst.txt
 ```
 
@@ -421,7 +413,7 @@ We would expect a high percent of retained paired reads and about less than 2.5%
 in this step. Let us review the percent of retained paired reads and dropped reads.
 
 ```bash
-cd /mnt/home/netid/RNAseq_Pipeline/Trimmomatic
+cd $HOME/RNAseq_Pipeline/Trimmomatic
 cat rst_trim_adapt.txt | cut -f1,8,21 -d' '
 ```
 
@@ -433,8 +425,7 @@ low quality bases. Let us review the quality of these filtered reads. We need to
 `FASTQC` followed by `MultiQC` to concatenate the FASTQC summaries. 
 
 ```bash
-cd ~/RNAseq_Pipeline
-nano FastQC_quality_filtered.sh
+nano $HOME/RNAseq_Pipeline/FastQC_quality_filtered.sh
 ```
 
 > Copy the following script and paste in the terminal editor window.
@@ -443,36 +434,36 @@ nano FastQC_quality_filtered.sh
 ```bash
 #==============================================================================
 #   File: FastQC_quality_filtered.sh
-#   Directory code: /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered
-#   Date: January 3, 2020
+#   Directory code: $HOME/RNAseq_Pipeline/Quality/Filtered
+#   Date: January 6, 2020
 #   Description: Generate FastQC reports for raw sequence reads.
 #   Run: bash FastQC_Filtered.sh
 #------------------------------------------------------------------------------
 #   Input files in directory:
-#       /mnt/scratch/netid/Trimmomatic
+#       $SCRATCH/Trimmomatic
 #
 #   Output files to directory:
-#       /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered
+#       $HOME/RNAseq_Pipeline/Quality/Filtered
 #==============================================================================
 
 ### Directory input files
-filter=/mnt/scratch/netid/Trimmomatic
+filter=$SCRATCH/Trimmomatic
 
 ### Directory output files
 ## Create output directory
-mkdir ~/RNAseq_Pipeline/Quality/Filtered
+mkdir $HOME/RNAseq_Pipeline/Quality/Filtered
 
 # Output directory
-out=/mnt/home/netid/RNAseq_Pipeline/Quality/Filtered
+out=$HOME/RNAseq_Pipeline/Quality/Filtered
 
 ## Create qstat directory for SLURM input/output files
-mkdir ~/RNAseq_Pipeline/Quality/Filtered/qstat
+mkdir $HOME/RNAseq_Pipeline/Quality/Filtered/qstat
 
 # SLURM input/output directory
-qstat=/mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/qstat
+qstat=$HOME/RNAseq_Pipeline/Quality/Filtered/qstat
 
 # Animal IDs
-cd /mnt/scratch/netid/RAW
+cd $SCRATCH/RAW
 anim=(`ls *.fastq | cut -f1 -d_ | uniq`)
 
 # Write bash script for each animal
@@ -508,19 +499,17 @@ done
 
 > Save the script by pressing `Ctrl o` and `enter`. To exit press `Ctrl x`.
 
-Same as before, the master script points to `netid` directories. We need to replace `netid` 
-with your username. 
+Run master script:
 
 ```bash
-sed -i 's/netid/username/g' FastQC_quality_filtered.sh
-bash FastQC_quality_filtered.sh
+bash $HOME/RNAseq_Pipeline/FastQC_quality_filtered.sh
 ```
 
 The FASTQC master will create a new directory in your Quality folder called `Filtered`. 
 Let us take a look at one of the submitted scripts:
 
 ```bash
-cd ~/RNAseq_Pipeline/Quality/Filtered/qstat
+cd $HOME/RNAseq_Pipeline/Quality/Filtered/qstat
 cat `ls *.qsub* | tail -1`
 ```
 
@@ -530,24 +519,26 @@ Check the status of the submitted jobs by using the show jobs shortcut:
 sq
 ```
 
-For now, we wait for the jobs to finish. Only when the `sq` displays zero running jobs can we proceed to the next step.
+For now, we wait for the jobs to finish. Only when the `sq` displays zero 
+running jobs can we proceed to the next step.
 
 
 ### Generate MultiQC Report: Filtered
 
-Before checking the quality summaries for the raw sequence, files let us first make sure all our jobs ran without errors or warnings. 
+Before checking the quality summaries for the raw sequence, files let us 
+first make sure all our jobs ran without errors or warnings. 
 Change to the `qstat` directory and run `checkJobs`.
 
 ```bash
-cd ~/RNAseq_Pipeline/Quality/Filtered/qstat
-bash ~/RNAseq_Pipeline/.checkJobs
+cd $HOME/RNAseq_Pipeline/Quality/Filtered/qstat
+checkJobs
 ```
 
-If the jobs finished with no errors we can proceed to generate the MultiQC report:
+If the jobs finished with no errors we can proceed to generate the 
+MultiQC report:
 
 ```bash
-cd ~/RNAseq_Pipeline
-nano multiQC_quality_filtered.sh
+nano $HOME/RNAseq_Pipeline/multiQC_quality_filtered.sh
 ```
 
 > Copy the following script and paste in the terminal editor window.
@@ -559,36 +550,36 @@ nano multiQC_quality_filtered.sh
 #SBATCH --time=04:00:00
 #SBATCH --mem=10G
 #SBATCH -J 'MultiQC'
-#SBATCH -o '/mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/MultiQC/MultiQC.o%j'
+#SBATCH -o '$HOME/RNAseq_Pipeline/Quality/Filtered/MultiQC/MultiQC.o%j'
 
 #==============================================================================
 #   File: multiQC_quality_filtered.sh
-#   Directory code: /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/MultiQC
-#   Date: January 3, 2020
+#   Directory code: $HOME/RNAseq_Pipeline/Quality/Filtered/MultiQC
+#   Date: January 6, 2020
 #   Description: Concatenate FASTQC quality reports into a single file.
 #   Run: sbatch multiQC_quality_filtered.sh
 #------------------------------------------------------------------------------
 #   Input files in directory:
-#       /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered
+#       $HOME/RNAseq_Pipeline/Quality/Filtered
 #
 #   Output files to directory:
-#       /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/MultiQC
+#       $HOME/RNAseq_Pipeline/Quality/Filtered/MultiQC
 #==============================================================================
 
 ### Directory input files
-mkdir /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/output
-Qrep=/mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/output
-mv /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/*.zip $Qrep
+mkdir $HOME/RNAseq_Pipeline/Quality/Filtered/output
+Qrep=$HOME/RNAseq_Pipeline/Quality/Filtered/output
+mv $HOME/RNAseq_Pipeline/Quality/Filtered/*.zip $Qrep
 
 ### Directory output files
 ## Create MultiQC output directory
-mkdir /mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/MultiQC
+mkdir $HOME/RNAseq_Pipeline/Quality/Filtered/MultiQC
 
 # Output directory
-QC=/mnt/home/netid/RNAseq_Pipeline/Quality/Filtered/MultiQC
+QC=$HOME/RNAseq_Pipeline/Quality/Filtered/MultiQC
 
 #' Activate virtual environment
-cd /mnt/home/netid/RNAseq_Pipeline/Quality/Raw/MultiQC
+cd $HOME/RNAseq_Pipeline/Quality/Raw/MultiQC
 source QC/bin/activate
 
 # Generate a summary file
@@ -597,23 +588,16 @@ multiqc $Qrep
 deactivate
 
 # Move bash script to work directory
-mv ~/RNAseq_Pipeline/multiQC_quality_filtered.sh $QC
+mv $HOME/RNAseq_Pipeline/multiQC_quality_filtered.sh $QC
 
 # Job details
 scontrol show job $SLURM_JOB_ID
 ```
 
-> Replace `netid` with your username.
+Run MultiQC on the filtered FASTQ files.
 
 ```bash
-sed -i 's/netid/username/g' multiQC_quality_filtered.sh
-```
-
-Now you can run MultiQC on the filtered FASTQ files.
-
-```bash
-cd ~/RNAseq_pipeline/
-sbatch multiQC_raw.sh
+sbatch $HOME/RNAseq_pipeline/multiQC_raw.sh
 ```
 
 Download the MultiQC report for quality filtered reads and compare with the previous MultiQC
@@ -621,5 +605,6 @@ report generated for the raw sequence reads. You should see an improvement in th
 phred scores and see no adpater sequences.
 
 I hope you enjoyed this tutorial. Send any comments or suggestions to velezdeb@msu.edu.
+
 
 
