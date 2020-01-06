@@ -135,8 +135,8 @@ nm=(`ls *.fa | cut -f1 -d.`)
 idx=(`grep Chromosome GenBankAccn.txt | cut -f3`)
 chr=(`grep Chromosome GenBankAccn.txt | cut -f1`)
 for ((i=0; i<${#idx[@]} ; i++ )) do
-    sed -e '"'"'s/'"'"'${idx[$i]}'"'"'/chr'"'"'${chr[$i]}'"'"'/'"'"' $nm.fa > tmp; mv tmp $nm.fa
-    sed -e '"'"'s/'"'"'${idx[$i]}'"'"'/chr'"'"'${chr[$i]}'"'"'/'"'"' $nm.gtf > tmp; mv tmp $nm.gtf
+    sed -e '"'"'s/'"'"'${idx[$i]}'"'"'/'"'"'${chr[$i]}'"'"'/'"'"' $nm.fa > tmp; mv tmp $nm.fa
+    sed -e '"'"'s/'"'"'${idx[$i]}'"'"'/'"'"'${chr[$i]}'"'"'/'"'"' $nm.gtf > tmp; mv tmp $nm.gtf
 done' > $dir/EquCab3.qsub
 
 # Submit script to hpcc
@@ -700,5 +700,6 @@ head $HOME/RNAseq_Pipeline/HISAT2/summary_alignment.txt
 ```
 
 I hope you enjoyed this tutorial. Send any comments or suggestions to velezdeb@msu.edu.
+
 
 

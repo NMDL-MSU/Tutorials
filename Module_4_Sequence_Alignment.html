@@ -265,8 +265,8 @@ code span.ot { color: #007020; }
 <a class="sourceLine" id="cb3-71" data-line-number="71"><span class="st">idx=(`grep Chromosome GenBankAccn.txt | cut -f3`)</span></a>
 <a class="sourceLine" id="cb3-72" data-line-number="72"><span class="st">chr=(`grep Chromosome GenBankAccn.txt | cut -f1`)</span></a>
 <a class="sourceLine" id="cb3-73" data-line-number="73"><span class="st">for ((i=0; i&lt;${#idx[@]} ; i++ )) do</span></a>
-<a class="sourceLine" id="cb3-74" data-line-number="74"><span class="st">    sed -e '&quot;'&quot;'s/'&quot;'&quot;'${idx[$i]}'&quot;'&quot;'/chr'&quot;'&quot;'${chr[$i]}'&quot;'&quot;'/'&quot;'&quot;' $nm.fa &gt; tmp; mv tmp $nm.fa</span></a>
-<a class="sourceLine" id="cb3-75" data-line-number="75"><span class="st">    sed -e '&quot;'&quot;'s/'&quot;'&quot;'${idx[$i]}'&quot;'&quot;'/chr'&quot;'&quot;'${chr[$i]}'&quot;'&quot;'/'&quot;'&quot;' $nm.gtf &gt; tmp; mv tmp $nm.gtf</span></a>
+<a class="sourceLine" id="cb3-74" data-line-number="74"><span class="st">    sed -e '&quot;'&quot;'s/'&quot;'&quot;'${idx[$i]}'&quot;'&quot;'/'&quot;'&quot;'${chr[$i]}'&quot;'&quot;'/'&quot;'&quot;' $nm.fa &gt; tmp; mv tmp $nm.fa</span></a>
+<a class="sourceLine" id="cb3-75" data-line-number="75"><span class="st">    sed -e '&quot;'&quot;'s/'&quot;'&quot;'${idx[$i]}'&quot;'&quot;'/'&quot;'&quot;'${chr[$i]}'&quot;'&quot;'/'&quot;'&quot;' $nm.gtf &gt; tmp; mv tmp $nm.gtf</span></a>
 <a class="sourceLine" id="cb3-76" data-line-number="76"><span class="st">done'</span> <span class="op">&gt;</span> <span class="va">$dir</span>/EquCab3.qsub</a>
 <a class="sourceLine" id="cb3-77" data-line-number="77"></a>
 <a class="sourceLine" id="cb3-78" data-line-number="78"><span class="co"># Submit script to hpcc</span></a>
