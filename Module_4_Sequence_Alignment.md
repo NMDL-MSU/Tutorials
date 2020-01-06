@@ -584,9 +584,9 @@ echo paired_aligned_reads `grep --context=3 '"'"'were paired'"'"' '${anim[$i]}'_
 echo unpaired_aligned_reads `grep --context=3 '"'"'were unpaired'"'"' '${anim[$i]}'_hisat2.o* | tail -2 | cut  -f5 -d'"'"' '"'"' | paste -sd+ - | bc` >> '$dir/${anim[$i]}'_stats.txt
 
 # Dropped
-grep '"'"'0 times'"'"' '${anim[$i]}'_hisat2.o*| head -1 | cut -f5 -d'"'"' '"'"' > drop
-grep '"'"'0 times'"'"' '${anim[$i]}'_hisat2.o* | tail -1 | cut -f5 -d'"'"' '"'"' >> drop
-echo unaligned_reads `cat drop | paste -sd+ - | bc` >> '$dir/${anim[$i]}'_stats.txt
+grep '"'"'0 times'"'"' '${anim[$i]}'_hisat2.o*| head -1 | cut -f5 -d'"'"' '"'"' > '${anim[$i]}'_drop
+grep '"'"'0 times'"'"' '${anim[$i]}'_hisat2.o* | tail -1 | cut -f5 -d'"'"' '"'"' >> '${anim[$i]}'_drop
+echo unaligned_reads `cat '${anim[$i]}'_drop | paste -sd+ - | bc` >> '$dir/${anim[$i]}'_stats.txt
 rm drop
 
 # Total Aligned
@@ -596,10 +596,10 @@ echo total_aligned_reads `echo $map` >> '${anim[$i]}'_stats.txt
 echo alignment_rate '"'"'0'"'"'`echo "scale=6 ; ($map / $tot)" | bc` >> '$dir/${anim[$i]}'_stats.txt
 
 # Total Uniquely Aligned
-grep '"'"'exactly 1 time'"'"' '${anim[$i]}'_hisat2.o* | cut -f5 -d'"'"' '"'"' | head -1 > uni
-grep '"'"'exactly 1 time'"'"' '${anim[$i]}'_hisat2.o* | cut -f5 -d'"'"' '"'"' | tail -1 >> uni
-echo total_uniquely_aligned_reads `cat uni | paste -sd+ - | bc` >> '$dir/${anim[$i]}'_stats.txt
-map=(`cat uni | paste -sd+ - | bc`)
+grep '"'"'exactly 1 time'"'"' '${anim[$i]}'_hisat2.o* | cut -f5 -d'"'"' '"'"' | head -1 > '${anim[$i]}'_uni
+grep '"'"'exactly 1 time'"'"' '${anim[$i]}'_hisat2.o* | cut -f5 -d'"'"' '"'"' | tail -1 >> '${anim[$i]}'_uni
+echo total_uniquely_aligned_reads `cat '${anim[$i]}'_uni | paste -sd+ - | bc` >> '$dir/${anim[$i]}'_stats.txt
+map=(`cat '${anim[$i]}'_uni | paste -sd+ - | bc`)
 echo unique_alignment_rate '"'"'0'"'"'`echo "scale=6 ; ($map / $tot)" | bc` >> '$dir/${anim[$i]}'_stats.txt
 rm uni
 
@@ -698,7 +698,5 @@ head $HOME/RNAseq_Pipeline/HISAT2/summary_alignment.txt
 ```
 
 I hope you enjoyed this tutorial. Send any comments or suggestions to velezdeb@msu.edu.
-
-
 
 
