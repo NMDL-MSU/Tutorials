@@ -461,6 +461,20 @@ code span.ot { color: #007020; }
 <div id="alignment-of-reads-to-reference" class="section level3">
 <h3>Alignment of reads to reference</h3>
 <p>HISAT2 (hierarchical indexing for spliced alignment of transcripts) is an alignment program for mapping next-generation sequencing reads. This method have been described in <a href="https://www.ncbi.nlm.nih.gov/pubmed/27560171">Nature Protocols</a>. We will run the alignment per animal using a master script. To ensure the jobs finish in the time allocated we will use eight cores.</p>
+<p>There are several options available for HISAT2, go to the <a href="https://ccb.jhu.edu/software/hisat2/manual.shtml">HISAT2 mannual</a> to view all available options.</p>
+<p>In this tutorial we are aligning Illimina paired end reads, from fastq files, that have strand specific information. The options selected are:</p>
+<blockquote>
+<p><code>-q</code> refering to fastq files<br />
+<code>--phred33</code> input qualities are ASCII chars equal to phred33 quality scores (Illumina)<br />
+<code>--rna-strandness RF</code> specifies the strand-specific information as <code>R</code> first strand (or reverse complement) and <code>F</code> the second strand (or transcript).<br />
+<code>--met-stderr</code> saves the metrics report to the “standard error” output file<br />
+<code>-p 8</code> parallel search threads, in this case 8<br />
+<code>-x</code> basename of the index for the reference genome<br />
+<code>-1</code> mate 1 fastq file<br />
+<code>-2</code> mate 2 fastq file<br />
+<code>-U</code> single mates (unpaired reads) fastq file<br />
+<code>-S</code> name for output sam file</p>
+</blockquote>
 <div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="fu">nano</span> <span class="va">$HOME</span>/RNAseq_Pipeline/hisat2_align_reads.sh</a></code></pre></div>
 <blockquote>
 <p>Copy the following script and paste in the terminal editor window.</p>

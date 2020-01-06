@@ -373,6 +373,24 @@ have been described in [Nature Protocols](https://www.ncbi.nlm.nih.gov/pubmed/27
 We will run the alignment per animal using a master script. To ensure the jobs
 finish in the time allocated we will use eight cores.
 
+There are several options available for HISAT2, go to the [HISAT2 mannual](https://ccb.jhu.edu/software/hisat2/manual.shtml) to view
+all available options.
+
+In this tutorial we are aligning Illimina paired end reads, from fastq files, 
+that have strand specific information. The options selected are:
+
+> `-q` refering to fastq files  
+> `--phred33` input qualities are ASCII chars equal to phred33 quality scores (Illumina)  
+> `--rna-strandness RF` specifies the strand-specific information as `R` first strand (or reverse complement)
+> and `F` the second strand (or transcript).  
+> `--met-stderr` saves the metrics report to the "standard error" output file  
+> `-p 8` parallel search threads, in this case 8  
+> `-x` basename of the index for the reference genome  
+> `-1` mate 1 fastq file  
+> `-2` mate 2 fastq file  
+> `-U` single mates (unpaired reads) fastq file  
+> `-S` name for output sam file  
+
 ```bash
 nano $HOME/RNAseq_Pipeline/hisat2_align_reads.sh
 ```
