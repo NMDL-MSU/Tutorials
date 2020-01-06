@@ -337,7 +337,7 @@ module list
 
 # Index Genome
 cd '$index'
-hisat2-build -p 10 '$ref/$nm' Index_'$nm'
+hisat2-build -p 10 '$ref/$nm'.fa Index_'$nm'
 
 # qstat
 scontrol show job $SLURM_JOB_ID' > $index/Index.qsub

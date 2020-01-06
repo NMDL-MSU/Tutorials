@@ -439,7 +439,7 @@ code span.ot { color: #007020; }
 <a class="sourceLine" id="cb9-44" data-line-number="44"></a>
 <a class="sourceLine" id="cb9-45" data-line-number="45"><span class="st"># Index Genome</span></a>
 <a class="sourceLine" id="cb9-46" data-line-number="46"><span class="st">cd '</span><span class="va">$index</span><span class="st">'</span></a>
-<a class="sourceLine" id="cb9-47" data-line-number="47"><span class="st">hisat2-build -p 10 '</span><span class="va">$ref</span>/<span class="va">$nm</span><span class="st">' Index_'</span><span class="va">$nm</span><span class="st">'</span></a>
+<a class="sourceLine" id="cb9-47" data-line-number="47"><span class="st">hisat2-build -p 10 '</span><span class="va">$ref</span>/<span class="va">$nm</span><span class="st">'.fa Index_'</span><span class="va">$nm</span><span class="st">'</span></a>
 <a class="sourceLine" id="cb9-48" data-line-number="48"></a>
 <a class="sourceLine" id="cb9-49" data-line-number="49"><span class="st"># qstat</span></a>
 <a class="sourceLine" id="cb9-50" data-line-number="50"><span class="st">scontrol show job $SLURM_JOB_ID'</span> <span class="op">&gt;</span> <span class="va">$index</span>/Index.qsub</a>
