@@ -431,8 +431,8 @@ index=$HOME/RNAseq_Pipeline/Reference/Index
 nm=(`ls $index/*.ht2 | cut -f1 -d. | uniq`)
 
 # Output Directory
-mkdir $SCRATCH/netid/HISAT2
-out=$SCRATCH/netid/HISAT2
+mkdir $SCRATCH/HISAT2
+out=$SCRATCH/HISAT2
 
 # Qstat directory
 mkdir $dir/qstat
@@ -698,5 +698,7 @@ head $HOME/RNAseq_Pipeline/HISAT2/summary_alignment.txt
 ```
 
 I hope you enjoyed this tutorial. Send any comments or suggestions to velezdeb@msu.edu.
+
+
 
 
