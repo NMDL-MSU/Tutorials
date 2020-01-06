@@ -669,7 +669,7 @@ code span.ot { color: #007020; }
 <a class="sourceLine" id="cb18-87" data-line-number="87"><span class="st">rm uni</span></a>
 <a class="sourceLine" id="cb18-88" data-line-number="88"></a>
 <a class="sourceLine" id="cb18-89" data-line-number="89"><span class="st">### Retain only uniquely aligned reads</span></a>
-<a class="sourceLine" id="cb18-90" data-line-number="90"><span class="st">(samtools view -H '</span><span class="va">$dir</span>/<span class="va">${anim[$i]}</span><span class="st">'.bam; samtools view -F 2308 '</span><span class="va">$dir</span>/<span class="va">${anim[$i]}</span><span class="st">' | grep -w '&quot;'&quot;'NH:i:1'&quot;'&quot;') | samtools view -bS - &gt; '</span><span class="va">$dir</span>/<span class="va">${anim[$i]}</span><span class="st">'_uniq.bam</span></a>
+<a class="sourceLine" id="cb18-90" data-line-number="90"><span class="st">(samtools view -H '</span><span class="va">$dir</span>/<span class="va">${anim[$i]}</span><span class="st">'.bam; samtools view -F 2308 '</span><span class="va">$dir</span>/<span class="va">${anim[$i]}</span><span class="st">'.bam | grep -w '&quot;'&quot;'NH:i:1'&quot;'&quot;') | samtools view -bS - &gt; '</span><span class="va">$dir</span>/<span class="va">${anim[$i]}</span><span class="st">'_uniq.bam</span></a>
 <a class="sourceLine" id="cb18-91" data-line-number="91"></a>
 <a class="sourceLine" id="cb18-92" data-line-number="92"><span class="st">### Job details</span></a>
 <a class="sourceLine" id="cb18-93" data-line-number="93"><span class="st">echo '</span>Job Details<span class="st">'</span></a>

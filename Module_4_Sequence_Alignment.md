@@ -606,7 +606,7 @@ echo unique_alignment_rate '"'"'0'"'"'`echo "scale=6 ; ($map / $tot)" | bc` >> '
 rm uni
 
 ### Retain only uniquely aligned reads
-(samtools view -H '$dir/${anim[$i]}'.bam; samtools view -F 2308 '$dir/${anim[$i]}' | grep -w '"'"'NH:i:1'"'"') | samtools view -bS - > '$dir/${anim[$i]}'_uniq.bam
+(samtools view -H '$dir/${anim[$i]}'.bam; samtools view -F 2308 '$dir/${anim[$i]}'.bam | grep -w '"'"'NH:i:1'"'"') | samtools view -bS - > '$dir/${anim[$i]}'_uniq.bam
 
 ### Job details
 echo 'Job Details'
