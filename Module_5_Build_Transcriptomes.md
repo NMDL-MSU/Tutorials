@@ -340,9 +340,7 @@ cd '$out'
 
 # Load required modules
 module load GCCcore/6.4.0
-module load SAMtools/1.9
 module load StringTie/1.3.5
-module load hisat2/2.1.0
 
 # Module List
 module list
