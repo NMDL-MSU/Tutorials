@@ -56,6 +56,7 @@ nano $HOME/RNAseq_Pipeline/SortBAM.sh
 
 > Copy the following script and paste in the terminal editor window.
 
+```bash
 #==============================================================================
 #   File: SortBAM.sh
 #   Directory code: $HOME/RNAseq_Pipeline/HISAT2
@@ -244,4 +245,15 @@ The depth per chromosome was also calculated per animal. These text files were s
 cd $HOME/RNAseq_Pipeline/Depth/Chrom
 cat `ls *_uniq_chr_depth.txt | head -1`
 ```
+
+### Build poteintial transcripts
+
+StringTie will be used to assemble transcriptomes per file. Refer to the [StringTie mannual](https://ccb.jhu.edu/software/stringtie/index.shtml?t=manual)
+for futher options that ones used in this tutorial. 
+
+```bash
+nano $HOME/RNAseq_Pipeline/StringTie.sh
+```
+
+> Copy the following script and paste in the terminal editor window.
 
