@@ -311,14 +311,14 @@ code span.ot { color: #007020; }
 <a class="sourceLine" id="cb7-51" data-line-number="51"><span class="bu">cd</span> <span class="va">$dir</span></a>
 <a class="sourceLine" id="cb7-52" data-line-number="52"></a>
 <a class="sourceLine" id="cb7-53" data-line-number="53"><span class="co"># Generate average coverage per base sequenced per animal</span></a>
-<a class="sourceLine" id="cb7-54" data-line-number="54"><span class="ex">samtools</span> depth <span class="va">${anim[$i]}</span>_uniq.bam  <span class="kw">|</span>  <span class="fu">awk</span> <span class="st">'{sum+=$3} END { print '</span><span class="va">${anim[$i]}</span><span class="st">' &quot;\t&quot; sum  &quot;\t&quot; NR &quot;\t&quot; ,sum/NR}'</span> <span class="op">&gt;&gt;</span> <span class="va">$out</span>/uniq_depth.txt</a>
+<a class="sourceLine" id="cb7-54" data-line-number="54"><span class="ex">samtools</span> depth <span class="va">${anim[$i]}</span>_uniq_sorted.bam  <span class="kw">|</span>  <span class="fu">awk</span> <span class="st">'{sum+=$3} END { print '</span><span class="va">${anim[$i]}</span><span class="st">' &quot;\t&quot; sum  &quot;\t&quot; NR &quot;\t&quot; ,sum/NR}'</span> <span class="op">&gt;&gt;</span> <span class="va">$out</span>/uniq_depth.txt</a>
 <a class="sourceLine" id="cb7-55" data-line-number="55"></a>
 <a class="sourceLine" id="cb7-56" data-line-number="56"><span class="co"># Generate average X coverage per genome size per animal</span></a>
-<a class="sourceLine" id="cb7-57" data-line-number="57"><span class="va">G=(</span><span class="kw">`</span><span class="ex">samtools</span> view -H <span class="va">${anim[$i]}</span>_uniq.bam <span class="kw">|</span> <span class="fu">grep</span> -P <span class="st">'^@SQ'</span> <span class="kw">|</span> <span class="fu">cut</span> -f 3 -d <span class="st">':'</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'{sum+=$1} END {print sum}'</span><span class="kw">`</span><span class="va">)</span></a>
-<a class="sourceLine" id="cb7-58" data-line-number="58"><span class="ex">samtools</span> depth <span class="va">${anim[$i]}</span>_uniq.bam  <span class="kw">|</span>  <span class="fu">awk</span> <span class="st">'{sum+=$3} END { print '</span><span class="va">${anim[$i]}</span><span class="st">' &quot;\t&quot; sum  &quot;\t&quot; '</span><span class="va">$G</span><span class="st">' &quot;\t&quot; ,sum/NR}'</span> <span class="op">&gt;&gt;</span> <span class="va">$out</span>/uniq_X_coverage.txt</a>
+<a class="sourceLine" id="cb7-57" data-line-number="57"><span class="va">G=(</span><span class="kw">`</span><span class="ex">samtools</span> view -H <span class="va">${anim[$i]}</span>_uniq_sorted.bam <span class="kw">|</span> <span class="fu">grep</span> -P <span class="st">'^@SQ'</span> <span class="kw">|</span> <span class="fu">cut</span> -f 3 -d <span class="st">':'</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'{sum+=$1} END {print sum}'</span><span class="kw">`</span><span class="va">)</span></a>
+<a class="sourceLine" id="cb7-58" data-line-number="58"><span class="ex">samtools</span> depth <span class="va">${anim[$i]}</span>_uniq_sorted.bam  <span class="kw">|</span>  <span class="fu">awk</span> <span class="st">'{sum+=$3} END { print '</span><span class="va">${anim[$i]}</span><span class="st">' &quot;\t&quot; sum  &quot;\t&quot; '</span><span class="va">$G</span><span class="st">' &quot;\t&quot; ,sum/NR}'</span> <span class="op">&gt;&gt;</span> <span class="va">$out</span>/uniq_X_coverage.txt</a>
 <a class="sourceLine" id="cb7-59" data-line-number="59"></a>
 <a class="sourceLine" id="cb7-60" data-line-number="60"><span class="co"># Generate depth per chromosome</span></a>
-<a class="sourceLine" id="cb7-61" data-line-number="61"><span class="ex">samtools</span> idxstats <span class="va">${anim[$i]}</span>_uniq.bam <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'&quot;'&quot;'{print </span><span class="va">$1</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$3</span><span class="st">}'&quot;'&quot;'</span> <span class="op">&gt;</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt</a>
+<a class="sourceLine" id="cb7-61" data-line-number="61"><span class="ex">samtools</span> idxstats <span class="va">${anim[$i]}</span>_uniq_sorted.bam <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'&quot;'&quot;'{print </span><span class="va">$1</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$3</span><span class="st">}'&quot;'&quot;'</span> <span class="op">&gt;</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt</a>
 <a class="sourceLine" id="cb7-62" data-line-number="62"><span class="bu">echo</span> chrAll <span class="kw">`</span><span class="fu">grep</span> chr <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt <span class="kw">|</span> <span class="fu">cut</span> -f2 -d<span class="st">' '</span> <span class="kw">|</span> <span class="ex">paste</span> -s -d+ <span class="kw">|</span> <span class="fu">bc</span><span class="kw">`</span> <span class="op">&gt;&gt;</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt</a>
 <a class="sourceLine" id="cb7-63" data-line-number="63"><span class="fu">sed</span> <span class="st">'s/ /\t/g'</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt <span class="op">&gt;</span> <span class="va">${anim[$i]}</span><span class="kw">;</span> <span class="fu">mv</span> <span class="va">${anim[$i]}</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt</a>
 <a class="sourceLine" id="cb7-64" data-line-number="64"></a>
@@ -337,11 +337,99 @@ code span.ot { color: #007020; }
 </div>
 <div id="build-poteintial-transcripts" class="section level3">
 <h3>Build poteintial transcripts</h3>
-<p>StringTie will be used to assemble transcriptomes per file. Refer to the <a href="https://ccb.jhu.edu/software/stringtie/index.shtml?t=manual">StringTie mannual</a> for futher options that ones used in this tutorial.</p>
+<p>StringTie will be used to generate a GTF file containing the assembled transcripts. Refer to the <a href="https://ccb.jhu.edu/software/stringtie/index.shtml?t=manual">StringTie mannual</a> for further optional parameters than the ones used in this tutorial.</p>
+<p>We will run stringtie with the following options:</p>
+<blockquote>
+<p><code>-G</code> reference annotation file (gtf)<br />
+<code>-rf</code> assumes a stranded library fr-firststrand<br />
+<code>-p 12</code> specifies the number of processing threds, in this case 12<br />
+<code>- o</code> parameter to set the name of the output gtf file</p>
+</blockquote>
 <div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="fu">nano</span> <span class="va">$HOME</span>/RNAseq_Pipeline/StringTie.sh</a></code></pre></div>
 <blockquote>
 <p>Copy the following script and paste in the terminal editor window.</p>
 </blockquote>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="co">#==============================================================================</span></a>
+<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="co">#   File: StringTie.sh</span></a>
+<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="co">#   Directory code: $HOME/RNAseq_Pipeline/StringTie</span></a>
+<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="co">#   Date: January 8, 2020</span></a>
+<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="co">#   Description: Assemble the transcriptome of each sample using</span></a>
+<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="co">#                the uniquely mapped reads.</span></a>
+<a class="sourceLine" id="cb13-7" data-line-number="7"><span class="co">#   Run: bash StringTie.sh</span></a>
+<a class="sourceLine" id="cb13-8" data-line-number="8"><span class="co">#------------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb13-9" data-line-number="9"><span class="co">#   Input files in directory:</span></a>
+<a class="sourceLine" id="cb13-10" data-line-number="10"><span class="co">#       $SCRATCH/HISAT2</span></a>
+<a class="sourceLine" id="cb13-11" data-line-number="11"><span class="co">#       $HOME/RNAseq_Pipeline/Reference/Index</span></a>
+<a class="sourceLine" id="cb13-12" data-line-number="12"><span class="co">#</span></a>
+<a class="sourceLine" id="cb13-13" data-line-number="13"><span class="co">#   Output files to directory:</span></a>
+<a class="sourceLine" id="cb13-14" data-line-number="14"><span class="co">#       $SCRATCH/StringTie</span></a>
+<a class="sourceLine" id="cb13-15" data-line-number="15"><span class="co">#==============================================================================</span></a>
+<a class="sourceLine" id="cb13-16" data-line-number="16"></a>
+<a class="sourceLine" id="cb13-17" data-line-number="17"><span class="co"># Animal IDs</span></a>
+<a class="sourceLine" id="cb13-18" data-line-number="18"><span class="bu">cd</span> <span class="va">$SCRATCH</span>/RAW</a>
+<a class="sourceLine" id="cb13-19" data-line-number="19"><span class="va">anim=(</span><span class="kw">`</span><span class="fu">ls</span> *.fastq <span class="kw">|</span> <span class="fu">cut</span> -f1 -d_ <span class="kw">|</span> <span class="fu">uniq</span><span class="kw">`</span><span class="va">)</span></a>
+<a class="sourceLine" id="cb13-20" data-line-number="20"></a>
+<a class="sourceLine" id="cb13-21" data-line-number="21"><span class="co"># Work Directory</span></a>
+<a class="sourceLine" id="cb13-22" data-line-number="22"><span class="fu">mkdir</span> <span class="va">$HOME</span>/RNAseq_Pipeline/StringTie</a>
+<a class="sourceLine" id="cb13-23" data-line-number="23"><span class="va">dir=$HOME</span>/RNAseq_Pipeline/StringTie</a>
+<a class="sourceLine" id="cb13-24" data-line-number="24"></a>
+<a class="sourceLine" id="cb13-25" data-line-number="25"><span class="co"># Output Directory</span></a>
+<a class="sourceLine" id="cb13-26" data-line-number="26"><span class="fu">mkdir</span> <span class="va">$SCRATCH</span>/StringTie</a>
+<a class="sourceLine" id="cb13-27" data-line-number="27"><span class="va">out=$SCRATCH</span>/StringTie</a>
+<a class="sourceLine" id="cb13-28" data-line-number="28"></a>
+<a class="sourceLine" id="cb13-29" data-line-number="29"><span class="co"># Qstat directory</span></a>
+<a class="sourceLine" id="cb13-30" data-line-number="30"><span class="fu">mkdir</span> <span class="va">$SCRATCH</span>/StringTie/qstat</a>
+<a class="sourceLine" id="cb13-31" data-line-number="31"><span class="va">qstat=$SCRATCH</span>/StringTie/qstat</a>
+<a class="sourceLine" id="cb13-32" data-line-number="32"></a>
+<a class="sourceLine" id="cb13-33" data-line-number="33"><span class="co"># Input Directory</span></a>
+<a class="sourceLine" id="cb13-34" data-line-number="34"><span class="va">bam=$SCRATCH</span>/HISATS</a>
+<a class="sourceLine" id="cb13-35" data-line-number="35"><span class="bu">cd</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Reference/Index</a>
+<a class="sourceLine" id="cb13-36" data-line-number="36"><span class="va">nm=(</span><span class="kw">`</span><span class="fu">ls</span> *.ht2 <span class="kw">|</span> <span class="fu">cut</span> -f1 -d. <span class="kw">|</span> <span class="fu">cut</span> -f2 -d_ <span class="kw">|</span> <span class="fu">uniq</span><span class="kw">`</span><span class="va">)</span></a>
+<a class="sourceLine" id="cb13-37" data-line-number="37"><span class="va">gtf=$HOME</span>/RNAseq_Pipeline/Reference/<span class="va">$nm</span>.gtf</a>
+<a class="sourceLine" id="cb13-38" data-line-number="38"></a>
+<a class="sourceLine" id="cb13-39" data-line-number="39"><span class="co"># Move script to directory</span></a>
+<a class="sourceLine" id="cb13-40" data-line-number="40"><span class="fu">mv</span> <span class="va">$HOME</span>/RNAseq_Pipeline/StringTie.sh <span class="va">$dir</span></a>
+<a class="sourceLine" id="cb13-41" data-line-number="41"></a>
+<a class="sourceLine" id="cb13-42" data-line-number="42"><span class="co"># Write bash script for each animal</span></a>
+<a class="sourceLine" id="cb13-43" data-line-number="43"><span class="kw">for</span> <span class="kw">((</span>i=0; i&lt;<span class="va">${#anim[@]}</span> ; i++ <span class="kw">))</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb13-44" data-line-number="44"><span class="bu">echo</span> <span class="st">'#!/bin/bash</span></a>
+<a class="sourceLine" id="cb13-45" data-line-number="45"><span class="st">#SBATCH --nodes=1</span></a>
+<a class="sourceLine" id="cb13-46" data-line-number="46"><span class="st">#SBATCH --cpus-per-task=12</span></a>
+<a class="sourceLine" id="cb13-47" data-line-number="47"><span class="st">#SBATCH --time=04:00:00</span></a>
+<a class="sourceLine" id="cb13-48" data-line-number="48"><span class="st">#SBATCH --mem=300G</span></a>
+<a class="sourceLine" id="cb13-49" data-line-number="49"><span class="st">#SBATCH -J '</span><span class="va">${anim[$i]}</span>_stringtie<span class="st">'</span></a>
+<a class="sourceLine" id="cb13-50" data-line-number="50"><span class="st">#SBATCH -o '</span><span class="va">${anim[$i]}</span>_stringtie.o%j<span class="st">'</span></a>
+<a class="sourceLine" id="cb13-51" data-line-number="51"></a>
+<a class="sourceLine" id="cb13-52" data-line-number="52"><span class="st"># Work Directory</span></a>
+<a class="sourceLine" id="cb13-53" data-line-number="53"><span class="st">cd '</span><span class="va">$out</span><span class="st">'</span></a>
+<a class="sourceLine" id="cb13-54" data-line-number="54"></a>
+<a class="sourceLine" id="cb13-55" data-line-number="55"><span class="st"># Load required modules</span></a>
+<a class="sourceLine" id="cb13-56" data-line-number="56"><span class="st">module load GCCcore/6.4.0</span></a>
+<a class="sourceLine" id="cb13-57" data-line-number="57"><span class="st">module load SAMtools/1.9</span></a>
+<a class="sourceLine" id="cb13-58" data-line-number="58"><span class="st">module load StringTie/1.3.5</span></a>
+<a class="sourceLine" id="cb13-59" data-line-number="59"><span class="st">module load hisat2/2.1.0</span></a>
+<a class="sourceLine" id="cb13-60" data-line-number="60"></a>
+<a class="sourceLine" id="cb13-61" data-line-number="61"><span class="st"># Module List</span></a>
+<a class="sourceLine" id="cb13-62" data-line-number="62"><span class="st">module list</span></a>
+<a class="sourceLine" id="cb13-63" data-line-number="63"></a>
+<a class="sourceLine" id="cb13-64" data-line-number="64"><span class="st"># Build transcriptome StringTie</span></a>
+<a class="sourceLine" id="cb13-65" data-line-number="65"><span class="st">stringtie '</span><span class="va">$bam</span>/<span class="va">${anim[$i]}</span><span class="st">'_uniq_sorted.bam -G '</span><span class="va">$gtf</span><span class="st">' --rf -p 12 -o '</span><span class="va">$bam</span>/<span class="va">${anim[$i]}</span><span class="st">'.gtf</span></a>
+<a class="sourceLine" id="cb13-66" data-line-number="66"></a>
+<a class="sourceLine" id="cb13-67" data-line-number="67"><span class="st"># Run statistics</span></a>
+<a class="sourceLine" id="cb13-68" data-line-number="68"><span class="st">scontrol show job $SLURM_JOB_ID'</span> <span class="op">&gt;</span> <span class="va">$qstat</span>/<span class="va">${anim[$i]}</span>.qsub</a>
+<a class="sourceLine" id="cb13-69" data-line-number="69"></a>
+<a class="sourceLine" id="cb13-70" data-line-number="70"><span class="co"># Submit script to hpcc</span></a>
+<a class="sourceLine" id="cb13-71" data-line-number="71"><span class="bu">cd</span> <span class="va">$qstat</span></a>
+<a class="sourceLine" id="cb13-72" data-line-number="72"><span class="ex">sbatch</span> <span class="va">${anim[$i]}</span>.qsub</a>
+<a class="sourceLine" id="cb13-73" data-line-number="73"></a>
+<a class="sourceLine" id="cb13-74" data-line-number="74"><span class="kw">done</span></a></code></pre></div>
+<blockquote>
+<p>Run master script.</p>
+</blockquote>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="fu">bash</span> <span class="va">$HOME</span>/RNAseq_Pipeline/StringTie.sh</a></code></pre></div>
+<p>Check submitted jobs <code>sq</code>. When all jobs have completed, check for any potential errors before procceding to the next step.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="bu">cd</span> <span class="va">$HOME</span>/RNAseq_Pipeline/StringTie/qstat</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="ex">checkJobs</span></a></code></pre></div>
 </div>
 </div><!-- /.entry-content -->
 </article>

@@ -1,3 +1,4 @@
+
 ---
 title: Assemble Potential Transcripts
 author: Deborah Velez-Irizarry
@@ -54,6 +55,7 @@ nano $HOME/RNAseq_Pipeline/SortBAM.sh
 ```
 
 > Copy the following script and paste in the terminal editor window.
+
 
 ```bash
 #==============================================================================
@@ -204,14 +206,14 @@ for ((i=0; i<${#anim[@]} ; i++ )) do
 cd $dir
 
 # Generate average coverage per base sequenced per animal
-samtools depth ${anim[$i]}_uniq.bam  |  awk '{sum+=$3} END { print '${anim[$i]}' "\t" sum  "\t" NR "\t" ,sum/NR}' >> $out/uniq_depth.txt
+samtools depth ${anim[$i]}_uniq_sorted.bam  |  awk '{sum+=$3} END { print '${anim[$i]}' "\t" sum  "\t" NR "\t" ,sum/NR}' >> $out/uniq_depth.txt
 
 # Generate average X coverage per genome size per animal
-G=(`samtools view -H ${anim[$i]}_uniq.bam | grep -P '^@SQ' | cut -f 3 -d ':' | awk '{sum+=$1} END {print sum}'`)
-samtools depth ${anim[$i]}_uniq.bam  |  awk '{sum+=$3} END { print '${anim[$i]}' "\t" sum  "\t" '$G' "\t" ,sum/NR}' >> $out/uniq_X_coverage.txt
+G=(`samtools view -H ${anim[$i]}_uniq_sorted.bam | grep -P '^@SQ' | cut -f 3 -d ':' | awk '{sum+=$1} END {print sum}'`)
+samtools depth ${anim[$i]}_uniq_sorted.bam  |  awk '{sum+=$3} END { print '${anim[$i]}' "\t" sum  "\t" '$G' "\t" ,sum/NR}' >> $out/uniq_X_coverage.txt
 
 # Generate depth per chromosome
-samtools idxstats ${anim[$i]}_uniq.bam | awk '"'"'{print $1" "$3}'"'"' > $chr/${anim[$i]}_uniq_chr_depth.txt
+samtools idxstats ${anim[$i]}_uniq_sorted.bam | awk '"'"'{print $1" "$3}'"'"' > $chr/${anim[$i]}_uniq_chr_depth.txt
 echo chrAll `grep chr $chr/${anim[$i]}_uniq_chr_depth.txt | cut -f2 -d' ' | paste -s -d+ | bc` >> $chr/${anim[$i]}_uniq_chr_depth.txt
 sed 's/ /\t/g' $chr/${anim[$i]}_uniq_chr_depth.txt > ${anim[$i]}; mv ${anim[$i]} $chr/${anim[$i]}_uniq_chr_depth.txt
 
@@ -247,12 +249,111 @@ cat `ls *_uniq_chr_depth.txt | head -1`
 
 ### Build poteintial transcripts
 
-StringTie will be used to assemble transcriptomes per file. Refer to the [StringTie mannual](https://ccb.jhu.edu/software/stringtie/index.shtml?t=manual)
-for futher options that ones used in this tutorial. 
+StringTie will be used to generate a GTF file containing the assembled transcripts.
+Refer to the [StringTie mannual](https://ccb.jhu.edu/software/stringtie/index.shtml?t=manual)
+for further optional parameters than the ones used in this tutorial. 
+
+We will run stringtie with the following options:
+
+> `-G` reference annotation file (gtf)  
+> `-rf` assumes a stranded library fr-firststrand  
+> `-p 12` specifies the number of processing threds, in this case 12  
+> `- o` parameter to set the name of the output gtf file   
 
 ```bash
 nano $HOME/RNAseq_Pipeline/StringTie.sh
 ```
 
 > Copy the following script and paste in the terminal editor window.
+
+```bash
+#==============================================================================
+#   File: StringTie.sh
+#   Directory code: $HOME/RNAseq_Pipeline/StringTie
+#   Date: January 8, 2020
+#   Description: Assemble the transcriptome of each sample using
+#                the uniquely mapped reads.
+#   Run: bash StringTie.sh
+#------------------------------------------------------------------------------
+#   Input files in directory:
+#       $SCRATCH/HISAT2
+#       $HOME/RNAseq_Pipeline/Reference/Index
+#
+#   Output files to directory:
+#       $SCRATCH/StringTie
+#==============================================================================
+
+# Animal IDs
+cd $SCRATCH/RAW
+anim=(`ls *.fastq | cut -f1 -d_ | uniq`)
+
+# Work Directory
+mkdir $HOME/RNAseq_Pipeline/StringTie
+dir=$HOME/RNAseq_Pipeline/StringTie
+
+# Output Directory
+mkdir $SCRATCH/StringTie
+out=$SCRATCH/StringTie
+
+# Qstat directory
+mkdir $SCRATCH/StringTie/qstat
+qstat=$SCRATCH/StringTie/qstat
+
+# Input Directory
+bam=$SCRATCH/HISATS
+cd $HOME/RNAseq_Pipeline/Reference/Index
+nm=(`ls *.ht2 | cut -f1 -d. | cut -f2 -d_ | uniq`)
+gtf=$HOME/RNAseq_Pipeline/Reference/$nm.gtf
+
+# Move script to directory
+mv $HOME/RNAseq_Pipeline/StringTie.sh $dir
+
+# Write bash script for each animal
+for ((i=0; i<${#anim[@]} ; i++ )) do
+echo '#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=12
+#SBATCH --time=04:00:00
+#SBATCH --mem=300G
+#SBATCH -J '${anim[$i]}_stringtie'
+#SBATCH -o '${anim[$i]}_stringtie.o%j'
+
+# Work Directory
+cd '$out'
+
+# Load required modules
+module load GCCcore/6.4.0
+module load SAMtools/1.9
+module load StringTie/1.3.5
+module load hisat2/2.1.0
+
+# Module List
+module list
+
+# Build transcriptome StringTie
+stringtie '$bam/${anim[$i]}'_uniq_sorted.bam -G '$gtf' --rf -p 12 -o '$bam/${anim[$i]}'.gtf
+
+# Run statistics
+scontrol show job $SLURM_JOB_ID' > $qstat/${anim[$i]}.qsub
+
+# Submit script to hpcc
+cd $qstat
+sbatch ${anim[$i]}.qsub
+
+done
+```
+
+> Run master script.
+
+```bash
+bash $HOME/RNAseq_Pipeline/StringTie.sh
+```
+
+Check submitted jobs `sq`. When all jobs have completed, check for any potential 
+errors before procceding to the next step.
+
+```bash
+cd $HOME/RNAseq_Pipeline/StringTie/qstat
+checkJobs
+```
 
