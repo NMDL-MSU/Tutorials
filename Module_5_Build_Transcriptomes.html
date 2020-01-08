@@ -311,23 +311,26 @@ code span.ot { color: #007020; }
 <a class="sourceLine" id="cb7-51" data-line-number="51"><span class="bu">cd</span> <span class="va">$dir</span></a>
 <a class="sourceLine" id="cb7-52" data-line-number="52"></a>
 <a class="sourceLine" id="cb7-53" data-line-number="53"><span class="co"># Generate average coverage per base sequenced per animal</span></a>
-<a class="sourceLine" id="cb7-54" data-line-number="54"><span class="ex">samtools</span> depth <span class="va">${anim[$i]}</span>_uniq_sorted.bam  <span class="kw">|</span>  <span class="fu">awk</span> <span class="st">'{sum+=$3} END { print '</span><span class="va">${anim[$i]}</span><span class="st">' \</span></a>
-<a class="sourceLine" id="cb7-55" data-line-number="55"><span class="st">&quot;\t&quot; sum  &quot;\t&quot; NR &quot;\t&quot; ,sum/NR}'</span> <span class="op">&gt;&gt;</span> <span class="va">$out</span>/uniq_depth.txt</a>
-<a class="sourceLine" id="cb7-56" data-line-number="56"></a>
-<a class="sourceLine" id="cb7-57" data-line-number="57"><span class="co"># Generate average X coverage per genome size per animal</span></a>
-<a class="sourceLine" id="cb7-58" data-line-number="58"><span class="va">G=(</span><span class="kw">`</span><span class="ex">samtools</span> view -H <span class="va">${anim[$i]}</span>_uniq_sorted.bam <span class="kw">|</span> <span class="fu">grep</span> -P <span class="st">'^@SQ'</span> <span class="kw">|</span> <span class="fu">cut</span> -f 3 -d <span class="st">':'</span> <span class="kw">|</span> <span class="kw">\</span></a>
-<a class="sourceLine" id="cb7-59" data-line-number="59">    <span class="fu">awk</span> <span class="st">'{sum+=$1} END {print sum}'</span><span class="kw">`</span><span class="va">)</span></a>
-<a class="sourceLine" id="cb7-60" data-line-number="60"><span class="ex">samtools</span> depth <span class="va">${anim[$i]}</span>_uniq_sorted.bam  <span class="kw">|</span>  <span class="fu">awk</span> <span class="st">'{sum+=$3} END { print '</span><span class="va">${anim[$i]}</span><span class="st">' \</span></a>
-<a class="sourceLine" id="cb7-61" data-line-number="61"><span class="st">    &quot;\t&quot; sum  &quot;\t&quot; '</span><span class="va">$G</span><span class="st">' &quot;\t&quot; ,sum/NR}'</span> <span class="op">&gt;&gt;</span> <span class="va">$out</span>/uniq_X_coverage.txt</a>
-<a class="sourceLine" id="cb7-62" data-line-number="62"></a>
-<a class="sourceLine" id="cb7-63" data-line-number="63"><span class="co"># Generate depth per chromosome</span></a>
-<a class="sourceLine" id="cb7-64" data-line-number="64"><span class="ex">samtools</span> idxstats <span class="va">${anim[$i]}</span>_uniq_sorted.bam <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'&quot;'&quot;'{print </span><span class="va">$1</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$3</span><span class="st">}'&quot;'&quot;'</span> <span class="op">&gt;</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt</a>
-<a class="sourceLine" id="cb7-65" data-line-number="65"><span class="bu">echo</span> chrAll <span class="kw">`</span><span class="fu">grep</span> chr <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt <span class="kw">|</span> <span class="fu">cut</span> -f2 -d<span class="st">' '</span> <span class="kw">|</span> <span class="ex">paste</span> -s -d+ <span class="kw">|</span> <span class="kw">\</span></a>
-<a class="sourceLine" id="cb7-66" data-line-number="66">    <span class="fu">bc</span><span class="kw">`</span> <span class="op">&gt;&gt;</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt</a>
-<a class="sourceLine" id="cb7-67" data-line-number="67"><span class="fu">sed</span> <span class="st">'s/ /\t/g'</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt <span class="op">&gt;</span> <span class="va">${anim[$i]}</span><span class="kw">;</span> <span class="fu">mv</span> <span class="va">${anim[$i]}</span> \</a>
-<a class="sourceLine" id="cb7-68" data-line-number="68">     <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt</a>
-<a class="sourceLine" id="cb7-69" data-line-number="69"></a>
-<a class="sourceLine" id="cb7-70" data-line-number="70"><span class="kw">done</span></a></code></pre></div>
+<a class="sourceLine" id="cb7-54" data-line-number="54"><span class="ex">samtools</span> depth <span class="va">${anim[$i]}</span>_uniq_sorted.bam  <span class="kw">|</span> <span class="kw">\</span></a>
+<a class="sourceLine" id="cb7-55" data-line-number="55">    <span class="fu">awk</span> <span class="st">'{sum+=$3} END { print '</span><span class="va">${anim[$i]}</span><span class="st">' &quot;\t&quot; sum  &quot;\t&quot; NR &quot;\t&quot; ,sum/NR}'</span> \</a>
+<a class="sourceLine" id="cb7-56" data-line-number="56">    <span class="op">&gt;&gt;</span> <span class="va">$out</span>/uniq_depth.txt</a>
+<a class="sourceLine" id="cb7-57" data-line-number="57"></a>
+<a class="sourceLine" id="cb7-58" data-line-number="58"><span class="co"># Generate average X coverage per genome size per animal</span></a>
+<a class="sourceLine" id="cb7-59" data-line-number="59"><span class="va">G=(</span><span class="kw">`</span><span class="ex">samtools</span> view -H <span class="va">${anim[$i]}</span>_uniq_sorted.bam <span class="kw">|</span> <span class="fu">grep</span> -P <span class="st">'^@SQ'</span> <span class="kw">|</span> <span class="kw">\</span></a>
+<a class="sourceLine" id="cb7-60" data-line-number="60">    <span class="fu">cut</span> -f 3 -d <span class="st">':'</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'{sum+=$1} END {print sum}'</span><span class="kw">`</span><span class="va">)</span></a>
+<a class="sourceLine" id="cb7-61" data-line-number="61"><span class="ex">samtools</span> depth <span class="va">${anim[$i]}</span>_uniq_sorted.bam  <span class="kw">|</span>  <span class="kw">\</span></a>
+<a class="sourceLine" id="cb7-62" data-line-number="62">    <span class="fu">awk</span> <span class="st">'{sum+=$3} END { print '</span><span class="va">${anim[$i]}</span><span class="st">' &quot;\t&quot; sum  &quot;\t&quot; '</span><span class="va">$G</span><span class="st">' &quot;\t&quot; ,sum/NR}'</span> \</a>
+<a class="sourceLine" id="cb7-63" data-line-number="63">     <span class="op">&gt;&gt;</span> <span class="va">$out</span>/uniq_X_coverage.txt</a>
+<a class="sourceLine" id="cb7-64" data-line-number="64"></a>
+<a class="sourceLine" id="cb7-65" data-line-number="65"><span class="co"># Generate depth per chromosome</span></a>
+<a class="sourceLine" id="cb7-66" data-line-number="66"><span class="ex">samtools</span> idxstats <span class="va">${anim[$i]}</span>_uniq_sorted.bam <span class="kw">|</span> <span class="kw">\</span></a>
+<a class="sourceLine" id="cb7-67" data-line-number="67">    <span class="fu">awk</span> <span class="st">'&quot;'&quot;'{print </span><span class="va">$1</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$3</span><span class="st">}'&quot;'&quot;'</span> <span class="op">&gt;</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt</a>
+<a class="sourceLine" id="cb7-68" data-line-number="68"><span class="bu">echo</span> chrAll <span class="kw">`</span><span class="fu">grep</span> chr <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt <span class="kw">|</span> <span class="fu">cut</span> -f2 -d<span class="st">' '</span> \</a>
+<a class="sourceLine" id="cb7-69" data-line-number="69">     <span class="kw">|</span> <span class="ex">paste</span> -s -d+ <span class="kw">|</span> <span class="fu">bc</span><span class="kw">`</span> <span class="op">&gt;&gt;</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt</a>
+<a class="sourceLine" id="cb7-70" data-line-number="70"><span class="fu">sed</span> <span class="st">'s/ /\t/g'</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt <span class="op">&gt;</span> <span class="va">${anim[$i]}</span><span class="kw">;</span> <span class="fu">mv</span> <span class="va">${anim[$i]}</span> \</a>
+<a class="sourceLine" id="cb7-71" data-line-number="71">     <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt</a>
+<a class="sourceLine" id="cb7-72" data-line-number="72"></a>
+<a class="sourceLine" id="cb7-73" data-line-number="73"><span class="kw">done</span></a></code></pre></div>
 <blockquote>
 <p>Run script interactively.</p>
 </blockquote>
@@ -418,16 +421,17 @@ code span.ot { color: #007020; }
 <a class="sourceLine" id="cb13-62" data-line-number="62"><span class="st">module list</span></a>
 <a class="sourceLine" id="cb13-63" data-line-number="63"></a>
 <a class="sourceLine" id="cb13-64" data-line-number="64"><span class="st"># Build transcriptome StringTie</span></a>
-<a class="sourceLine" id="cb13-65" data-line-number="65"><span class="st">stringtie '</span><span class="va">$bam</span>/<span class="va">${anim[$i]}</span><span class="st">'_uniq_sorted.bam -G '</span><span class="va">$gtf</span><span class="st">' --rf -p 12 -o '</span><span class="va">$bam</span>/<span class="va">${anim[$i]}</span><span class="st">'.gtf</span></a>
-<a class="sourceLine" id="cb13-66" data-line-number="66"></a>
-<a class="sourceLine" id="cb13-67" data-line-number="67"><span class="st"># Run statistics</span></a>
-<a class="sourceLine" id="cb13-68" data-line-number="68"><span class="st">scontrol show job $SLURM_JOB_ID'</span> <span class="op">&gt;</span> <span class="va">$qstat</span>/<span class="va">${anim[$i]}</span>.qsub</a>
-<a class="sourceLine" id="cb13-69" data-line-number="69"></a>
-<a class="sourceLine" id="cb13-70" data-line-number="70"><span class="co"># Submit script to hpcc</span></a>
-<a class="sourceLine" id="cb13-71" data-line-number="71"><span class="bu">cd</span> <span class="va">$qstat</span></a>
-<a class="sourceLine" id="cb13-72" data-line-number="72"><span class="ex">sbatch</span> <span class="va">${anim[$i]}</span>.qsub</a>
-<a class="sourceLine" id="cb13-73" data-line-number="73"></a>
-<a class="sourceLine" id="cb13-74" data-line-number="74"><span class="kw">done</span></a></code></pre></div>
+<a class="sourceLine" id="cb13-65" data-line-number="65"><span class="st">stringtie '</span><span class="va">$bam</span>/<span class="va">${anim[$i]}</span><span class="st">'_uniq_sorted.bam -G '</span><span class="va">$gtf</span><span class="st">' \</span></a>
+<a class="sourceLine" id="cb13-66" data-line-number="66"><span class="st">    --rf -p 12 -o '</span><span class="va">$bam</span>/<span class="va">${anim[$i]}</span><span class="st">'.gtf</span></a>
+<a class="sourceLine" id="cb13-67" data-line-number="67"></a>
+<a class="sourceLine" id="cb13-68" data-line-number="68"><span class="st"># Run statistics</span></a>
+<a class="sourceLine" id="cb13-69" data-line-number="69"><span class="st">scontrol show job $SLURM_JOB_ID'</span> <span class="op">&gt;</span> <span class="va">$qstat</span>/<span class="va">${anim[$i]}</span>.qsub</a>
+<a class="sourceLine" id="cb13-70" data-line-number="70"></a>
+<a class="sourceLine" id="cb13-71" data-line-number="71"><span class="co"># Submit script to hpcc</span></a>
+<a class="sourceLine" id="cb13-72" data-line-number="72"><span class="bu">cd</span> <span class="va">$qstat</span></a>
+<a class="sourceLine" id="cb13-73" data-line-number="73"><span class="ex">sbatch</span> <span class="va">${anim[$i]}</span>.qsub</a>
+<a class="sourceLine" id="cb13-74" data-line-number="74"></a>
+<a class="sourceLine" id="cb13-75" data-line-number="75"><span class="kw">done</span></a></code></pre></div>
 <blockquote>
 <p>Run master script.</p>
 </blockquote>

@@ -205,19 +205,22 @@ for ((i=0; i<${#anim[@]} ; i++ )) do
 cd $dir
 
 # Generate average coverage per base sequenced per animal
-samtools depth ${anim[$i]}_uniq_sorted.bam  |  awk '{sum+=$3} END { print '${anim[$i]}' \
-"\t" sum  "\t" NR "\t" ,sum/NR}' >> $out/uniq_depth.txt
+samtools depth ${anim[$i]}_uniq_sorted.bam  | \
+	awk '{sum+=$3} END { print '${anim[$i]}' "\t" sum  "\t" NR "\t" ,sum/NR}' \
+	>> $out/uniq_depth.txt
 
 # Generate average X coverage per genome size per animal
-G=(`samtools view -H ${anim[$i]}_uniq_sorted.bam | grep -P '^@SQ' | cut -f 3 -d ':' | \
-	awk '{sum+=$1} END {print sum}'`)
-samtools depth ${anim[$i]}_uniq_sorted.bam  |  awk '{sum+=$3} END { print '${anim[$i]}' \
-	"\t" sum  "\t" '$G' "\t" ,sum/NR}' >> $out/uniq_X_coverage.txt
+G=(`samtools view -H ${anim[$i]}_uniq_sorted.bam | grep -P '^@SQ' | \
+	cut -f 3 -d ':' | awk '{sum+=$1} END {print sum}'`)
+samtools depth ${anim[$i]}_uniq_sorted.bam  |  \
+	awk '{sum+=$3} END { print '${anim[$i]}' "\t" sum  "\t" '$G' "\t" ,sum/NR}' \
+	 >> $out/uniq_X_coverage.txt
 
 # Generate depth per chromosome
-samtools idxstats ${anim[$i]}_uniq_sorted.bam | awk '"'"'{print $1" "$3}'"'"' > $chr/${anim[$i]}_uniq_chr_depth.txt
-echo chrAll `grep chr $chr/${anim[$i]}_uniq_chr_depth.txt | cut -f2 -d' ' | paste -s -d+ | \
- 	bc` >> $chr/${anim[$i]}_uniq_chr_depth.txt
+samtools idxstats ${anim[$i]}_uniq_sorted.bam | \
+	awk '"'"'{print $1" "$3}'"'"' > $chr/${anim[$i]}_uniq_chr_depth.txt
+echo chrAll `grep chr $chr/${anim[$i]}_uniq_chr_depth.txt | cut -f2 -d' ' \
+	 | paste -s -d+ | bc` >> $chr/${anim[$i]}_uniq_chr_depth.txt
 sed 's/ /\t/g' $chr/${anim[$i]}_uniq_chr_depth.txt > ${anim[$i]}; mv ${anim[$i]} \
 	 $chr/${anim[$i]}_uniq_chr_depth.txt
 
@@ -335,7 +338,8 @@ module load hisat2/2.1.0
 module list
 
 # Build transcriptome StringTie
-stringtie '$bam/${anim[$i]}'_uniq_sorted.bam -G '$gtf' --rf -p 12 -o '$bam/${anim[$i]}'.gtf
+stringtie '$bam/${anim[$i]}'_uniq_sorted.bam -G '$gtf' \
+	--rf -p 12 -o '$bam/${anim[$i]}'.gtf
 
 # Run statistics
 scontrol show job $SLURM_JOB_ID' > $qstat/${anim[$i]}.qsub
