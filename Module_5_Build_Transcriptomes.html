@@ -153,21 +153,8 @@ code span.ot { color: #007020; }
 <li><a href="#description">Description</a></li>
 <li><a href="#connect-to-hpc-system">Connect to HPC system</a></li>
 <li><a href="#sort-bam-files">Sort BAM Files</a></li>
-<li><a href="#animal-ids">Animal IDs</a></li>
-<li><a href="#work-directory">Work Directory</a></li>
-<li><a href="#input-directory">Input Directory</a></li>
-<li><a href="#output-directory">Output Directory</a></li>
-<li><a href="#qstat-directory">Qstat directory</a></li>
-<li><a href="#move-script-to-directory">Move script to directory</a></li>
-<li><a href="#write-bash-script-for-each-animal">Write bash script for each animal</a></li>
-<li><a href="#work-directory-1">Work Directory</a></li>
-<li><a href="#load-required-modules">Load required modules</a></li>
-<li><a href="#module-list">Module List</a></li>
-<li><a href="#sort-bam-files-1">Sort BAM files</a></li>
-<li><a href="#run-statistics">Run statistics</a></li>
-<li><a href="#submit-script-to-hpcc">Submit script to hpcc</a><ul>
 <li><a href="#obtain-depth-of-coverage">Obtain depth of coverage</a></li>
-</ul></li>
+<li><a href="#build-poteintial-transcripts">Build poteintial transcripts</a></li>
 </ul>
 </div>
 
@@ -192,148 +179,169 @@ code span.ot { color: #007020; }
 <blockquote>
 <p>Copy the following script and paste in the terminal editor window.</p>
 </blockquote>
-<p>#============================================================================== # File: SortBAM.sh # Directory code: $HOME/RNAseq_Pipeline/HISAT2 # Date: January 8, 2020 # Description: Sort unique BAM files # Run: bash SortBAM.sh #—————————————————————————— # Input files in directory: # $SCRATCH/HISAT2 # # Output files to directory: # $SCRATCH/HISAT2 #==============================================================================</p>
-</div>
-<div id="animal-ids" class="section level1">
-<h1>Animal IDs</h1>
-<p>cd $SCRATCH/RAW anim=(<code>ls *.fastq | cut -f1 -d_ | uniq</code>)</p>
-</div>
-<div id="work-directory" class="section level1">
-<h1>Work Directory</h1>
-<p>dir=$HOME/RNAseq_Pipeline/HISAT2</p>
-</div>
-<div id="input-directory" class="section level1">
-<h1>Input Directory</h1>
-<p>inp=$SCRATCH/HISAT2</p>
-</div>
-<div id="output-directory" class="section level1">
-<h1>Output Directory</h1>
-<p>out=$SCRATCH/HISAT2</p>
-</div>
-<div id="qstat-directory" class="section level1">
-<h1>Qstat directory</h1>
-<p>mkdir <span class="math inline">\(HOME/RNAseq_Pipeline/HISAT2/qstat/sort qstat=\)</span>HOME/RNAseq_Pipeline/HISAT2/qstat/sort</p>
-</div>
-<div id="move-script-to-directory" class="section level1">
-<h1>Move script to directory</h1>
-<p>mv $HOME/RNAseq_Pipeline/SortBAM.sh $dir</p>
-</div>
-<div id="write-bash-script-for-each-animal" class="section level1">
-<h1>Write bash script for each animal</h1>
-<p>for ((i=0; i&lt;<span class="math inline">\({#anim[@]} ; i++ )) do echo '#!/bin/bash #SBATCH --nodes=1 #SBATCH --cpus-per-task=1 #SBATCH --time=04:00:00 #SBATCH --mem=50G #SBATCH -J '\)</span>{anim[$i]}_sortBAM’ #SBATCH -o ’<span class="math inline">\({anim[\)</span>i]}_sortBAM.o%j’</p>
-</div>
-<div id="work-directory-1" class="section level1">
-<h1>Work Directory</h1>
-<p>cd ‘$out’</p>
-</div>
-<div id="load-required-modules" class="section level1">
-<h1>Load required modules</h1>
-<p>module load SAMtools/1.9</p>
-</div>
-<div id="module-list" class="section level1">
-<h1>Module List</h1>
-<p>module list</p>
-</div>
-<div id="sort-bam-files-1" class="section level1">
-<h1>Sort BAM files</h1>
-<p>samtools sort -o ‘<span class="math inline">\(out/\)</span>{anim[$i]}’_uniq_sorted.bam ‘<span class="math inline">\(inp/\)</span>{anim[$i]}’_uniq.bam</p>
-</div>
-<div id="run-statistics" class="section level1">
-<h1>Run statistics</h1>
-<p>scontrol show job $SLURM_JOB_ID’ &gt; <span class="math inline">\(qstat/\)</span>{anim[$i]}.qsub</p>
-</div>
-<div id="submit-script-to-hpcc" class="section level1">
-<h1>Submit script to hpcc</h1>
-<p>cd $qstat sbatch <span class="math inline">\({anim[\)</span>i]}.qsub</p>
-<p>done ``` &gt; Run master script.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="fu">bash</span> <span class="va">$HOME</span>/RNAseq_Pipeline/SortBAM.sh</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co">#==============================================================================</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#   File: SortBAM.sh</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#   Directory code: $HOME/RNAseq_Pipeline/HISAT2</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#   Date: January 8, 2020</span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#   Description: Sort unique BAM files</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#   Run: bash SortBAM.sh</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#------------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#   Input files in directory:</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#       $SCRATCH/HISAT2</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#   Output files to directory:</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#       $SCRATCH/HISAT2</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#==============================================================================</span></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co"># Animal IDs</span></a>
+<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="bu">cd</span> <span class="va">$SCRATCH</span>/RAW</a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="va">anim=(</span><span class="kw">`</span><span class="fu">ls</span> *.fastq <span class="kw">|</span> <span class="fu">cut</span> -f1 -d_ <span class="kw">|</span> <span class="fu">uniq</span><span class="kw">`</span><span class="va">)</span></a>
+<a class="sourceLine" id="cb3-18" data-line-number="18"></a>
+<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co"># Work Directory</span></a>
+<a class="sourceLine" id="cb3-20" data-line-number="20"><span class="va">dir=$HOME</span>/RNAseq_Pipeline/HISAT2</a>
+<a class="sourceLine" id="cb3-21" data-line-number="21"></a>
+<a class="sourceLine" id="cb3-22" data-line-number="22"><span class="co"># Input Directory</span></a>
+<a class="sourceLine" id="cb3-23" data-line-number="23"><span class="va">inp=$SCRATCH</span>/HISAT2</a>
+<a class="sourceLine" id="cb3-24" data-line-number="24"></a>
+<a class="sourceLine" id="cb3-25" data-line-number="25"><span class="co"># Output Directory</span></a>
+<a class="sourceLine" id="cb3-26" data-line-number="26"><span class="va">out=$SCRATCH</span>/HISAT2</a>
+<a class="sourceLine" id="cb3-27" data-line-number="27"></a>
+<a class="sourceLine" id="cb3-28" data-line-number="28"><span class="co"># Qstat directory</span></a>
+<a class="sourceLine" id="cb3-29" data-line-number="29"><span class="fu">mkdir</span> <span class="va">$HOME</span>/RNAseq_Pipeline/HISAT2/qstat/sort</a>
+<a class="sourceLine" id="cb3-30" data-line-number="30"><span class="va">qstat=$HOME</span>/RNAseq_Pipeline/HISAT2/qstat/sort</a>
+<a class="sourceLine" id="cb3-31" data-line-number="31"></a>
+<a class="sourceLine" id="cb3-32" data-line-number="32"><span class="co"># Move script to directory</span></a>
+<a class="sourceLine" id="cb3-33" data-line-number="33"><span class="fu">mv</span> <span class="va">$HOME</span>/RNAseq_Pipeline/SortBAM.sh <span class="va">$dir</span></a>
+<a class="sourceLine" id="cb3-34" data-line-number="34"></a>
+<a class="sourceLine" id="cb3-35" data-line-number="35"><span class="co"># Write bash script for each animal</span></a>
+<a class="sourceLine" id="cb3-36" data-line-number="36"><span class="kw">for</span> <span class="kw">((</span>i=0; i&lt;<span class="va">${#anim[@]}</span> ; i++ <span class="kw">))</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb3-37" data-line-number="37"><span class="bu">echo</span> <span class="st">'#!/bin/bash</span></a>
+<a class="sourceLine" id="cb3-38" data-line-number="38"><span class="st">#SBATCH --nodes=1</span></a>
+<a class="sourceLine" id="cb3-39" data-line-number="39"><span class="st">#SBATCH --cpus-per-task=1</span></a>
+<a class="sourceLine" id="cb3-40" data-line-number="40"><span class="st">#SBATCH --time=04:00:00</span></a>
+<a class="sourceLine" id="cb3-41" data-line-number="41"><span class="st">#SBATCH --mem=50G</span></a>
+<a class="sourceLine" id="cb3-42" data-line-number="42"><span class="st">#SBATCH -J '</span><span class="va">${anim[$i]}</span>_sortBAM<span class="st">'</span></a>
+<a class="sourceLine" id="cb3-43" data-line-number="43"><span class="st">#SBATCH -o '</span><span class="va">${anim[$i]}</span>_sortBAM.o%j<span class="st">'</span></a>
+<a class="sourceLine" id="cb3-44" data-line-number="44"></a>
+<a class="sourceLine" id="cb3-45" data-line-number="45"><span class="st"># Work Directory</span></a>
+<a class="sourceLine" id="cb3-46" data-line-number="46"><span class="st">cd '</span><span class="va">$out</span><span class="st">'</span></a>
+<a class="sourceLine" id="cb3-47" data-line-number="47"></a>
+<a class="sourceLine" id="cb3-48" data-line-number="48"><span class="st"># Load required modules</span></a>
+<a class="sourceLine" id="cb3-49" data-line-number="49"><span class="st">module load SAMtools/1.9</span></a>
+<a class="sourceLine" id="cb3-50" data-line-number="50"></a>
+<a class="sourceLine" id="cb3-51" data-line-number="51"><span class="st"># Module List</span></a>
+<a class="sourceLine" id="cb3-52" data-line-number="52"><span class="st">module list</span></a>
+<a class="sourceLine" id="cb3-53" data-line-number="53"></a>
+<a class="sourceLine" id="cb3-54" data-line-number="54"><span class="st"># Sort BAM files</span></a>
+<a class="sourceLine" id="cb3-55" data-line-number="55"><span class="st">samtools sort -o '</span><span class="va">$out</span>/<span class="va">${anim[$i]}</span><span class="st">'_uniq_sorted.bam '</span><span class="va">$inp</span>/<span class="va">${anim[$i]}</span><span class="st">'_uniq.bam   </span></a>
+<a class="sourceLine" id="cb3-56" data-line-number="56"></a>
+<a class="sourceLine" id="cb3-57" data-line-number="57"><span class="st"># Run statistics</span></a>
+<a class="sourceLine" id="cb3-58" data-line-number="58"><span class="st">scontrol show job $SLURM_JOB_ID'</span> <span class="op">&gt;</span> <span class="va">$qstat</span>/<span class="va">${anim[$i]}</span>.qsub</a>
+<a class="sourceLine" id="cb3-59" data-line-number="59"></a>
+<a class="sourceLine" id="cb3-60" data-line-number="60"><span class="co"># Submit script to hpcc</span></a>
+<a class="sourceLine" id="cb3-61" data-line-number="61"><span class="bu">cd</span> <span class="va">$qstat</span></a>
+<a class="sourceLine" id="cb3-62" data-line-number="62"><span class="ex">sbatch</span> <span class="va">${anim[$i]}</span>.qsub</a>
+<a class="sourceLine" id="cb3-63" data-line-number="63"></a>
+<a class="sourceLine" id="cb3-64" data-line-number="64"><span class="kw">done</span></a></code></pre></div>
+<blockquote>
+<p>Run master script.</p>
+</blockquote>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="fu">bash</span> <span class="va">$HOME</span>/RNAseq_Pipeline/SortBAM.sh</a></code></pre></div>
 <p>Check submitted jobs <code>sq</code>. When all jobs have completed, check for errors before procceding to the next step.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="bu">cd</span> <span class="va">$HOME</span>/RNAseq_Pipeline/HISAT2/qstat/sort</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="ex">checkJobs</span></a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="bu">cd</span> <span class="va">$HOME</span>/RNAseq_Pipeline/HISAT2/qstat/sort</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="ex">checkJobs</span></a></code></pre></div>
+</div>
 <div id="obtain-depth-of-coverage" class="section level3">
 <h3>Obtain depth of coverage</h3>
 <p>Before builing the transcriptome, we should get an average estimate of the depth of coverage per animal. The average depth of coverage (focusing on covered bases) is a ratio of the total number of counts per covered regions over the total number of nucleotides sequenced. This will be estimated per bam file using Samtools. Another estimate of coverage is the average X coverage were instead of dividing by the total number of nucleotides sequenced, you divide by the total genome size.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="fu">nano</span> <span class="va">$HOME</span>/RNAseq_Pipeline/depth.sh</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="fu">nano</span> <span class="va">$HOME</span>/RNAseq_Pipeline/depth.sh</a></code></pre></div>
 <blockquote>
 <p>Copy the following script and paste in the terminal editor window.</p>
 </blockquote>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co">#==============================================================================</span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="co">#   File: depth.sh</span></a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="co">#   Directory code: $HOME/RNAseq_Pipeline/Depth/depth.sh</span></a>
-<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co">#   Date: January 8, 2020</span></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#   Description: Obtain read depth for each animal unique mapped reads.</span></a>
-<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#   Run: bash depth.sh</span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#------------------------------------------------------------------------------</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#   Input files in directory:</span></a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#       $SCRATCH/HISAT2</span></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#</span></a>
-<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#   Output files to directory:</span></a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#       $HOME/RNAseq_Pipeline/Depth</span></a>
-<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#</span></a>
-<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#   Output files:</span></a>
-<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#       uniq_depth.txt</span></a>
-<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#       uniq_X_coverage.txt</span></a>
-<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#==============================================================================</span></a>
-<a class="sourceLine" id="cb6-18" data-line-number="18"></a>
-<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="co"># Input Directory</span></a>
-<a class="sourceLine" id="cb6-20" data-line-number="20"><span class="va">dir=$SCRATCH</span>/HISAT2</a>
-<a class="sourceLine" id="cb6-21" data-line-number="21"></a>
-<a class="sourceLine" id="cb6-22" data-line-number="22"><span class="co"># Output Directory</span></a>
-<a class="sourceLine" id="cb6-23" data-line-number="23"><span class="fu">mkdir</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth</a>
-<a class="sourceLine" id="cb6-24" data-line-number="24"><span class="va">out=$HOME</span>/RNAseq_Pipeline/Depth</a>
-<a class="sourceLine" id="cb6-25" data-line-number="25"></a>
-<a class="sourceLine" id="cb6-26" data-line-number="26"><span class="co"># Chromosome directory</span></a>
-<a class="sourceLine" id="cb6-27" data-line-number="27"><span class="fu">mkdir</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth/Chrom</a>
-<a class="sourceLine" id="cb6-28" data-line-number="28"><span class="va">chr=$HOME</span>/RNAseq_Pipeline/Depth/Chrom</a>
-<a class="sourceLine" id="cb6-29" data-line-number="29"></a>
-<a class="sourceLine" id="cb6-30" data-line-number="30"><span class="co"># Animal IDs</span></a>
-<a class="sourceLine" id="cb6-31" data-line-number="31"><span class="bu">cd</span> <span class="va">$SCRATCH</span>/RAW</a>
-<a class="sourceLine" id="cb6-32" data-line-number="32"><span class="va">anim=(</span><span class="kw">`</span><span class="fu">ls</span> *.fastq <span class="kw">|</span> <span class="fu">cut</span> -f1 -d_ <span class="kw">|</span> <span class="fu">uniq</span><span class="kw">`</span><span class="va">)</span></a>
-<a class="sourceLine" id="cb6-33" data-line-number="33"></a>
-<a class="sourceLine" id="cb6-34" data-line-number="34"><span class="co"># Move bash script to Depth directory</span></a>
-<a class="sourceLine" id="cb6-35" data-line-number="35"><span class="fu">mv</span> <span class="va">$HOME</span>/RNAseq_Pipeline/depth.sh <span class="va">$out</span></a>
-<a class="sourceLine" id="cb6-36" data-line-number="36"></a>
-<a class="sourceLine" id="cb6-37" data-line-number="37"><span class="co"># Load SamTools Module</span></a>
-<a class="sourceLine" id="cb6-38" data-line-number="38"><span class="ex">module</span> load SAMtools/1.9</a>
-<a class="sourceLine" id="cb6-39" data-line-number="39"></a>
-<a class="sourceLine" id="cb6-40" data-line-number="40"><span class="co"># Add column names to out files</span></a>
-<a class="sourceLine" id="cb6-41" data-line-number="41"><span class="bu">echo</span> Animal TotalCovered NucleotidesSequenced <span class="op">&gt;</span> <span class="va">$out</span>/uniq_depth.txt</a>
-<a class="sourceLine" id="cb6-42" data-line-number="42"><span class="fu">sed</span> -e <span class="st">'s/ /\t/'</span> <span class="va">$out</span>/uniq_depth.txt <span class="op">&gt;</span> tmp<span class="kw">;</span> <span class="fu">mv</span> tmp <span class="va">$out</span>/uniq_depth.txt</a>
-<a class="sourceLine" id="cb6-43" data-line-number="43"></a>
-<a class="sourceLine" id="cb6-44" data-line-number="44"><span class="bu">echo</span> Animal TotalCovered TotalGenomeSize <span class="op">&gt;</span> <span class="va">$out</span>/uniq_X_coverage.txt</a>
-<a class="sourceLine" id="cb6-45" data-line-number="45"><span class="fu">sed</span> -e <span class="st">'s/ /\t/'</span> <span class="va">$out</span>/uniq_X_coverage.txt <span class="op">&gt;</span> tmp<span class="kw">;</span> <span class="fu">mv</span> tmp <span class="va">$out</span>/uniq_X_coverage.txt</a>
-<a class="sourceLine" id="cb6-46" data-line-number="46"></a>
-<a class="sourceLine" id="cb6-47" data-line-number="47"><span class="co"># Calculate depth interactively per animal</span></a>
-<a class="sourceLine" id="cb6-48" data-line-number="48"><span class="kw">for</span> <span class="kw">((</span>i=0; i&lt;<span class="va">${#anim[@]}</span> ; i++ <span class="kw">))</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb6-49" data-line-number="49"></a>
-<a class="sourceLine" id="cb6-50" data-line-number="50"><span class="co"># Work directory</span></a>
-<a class="sourceLine" id="cb6-51" data-line-number="51"><span class="bu">cd</span> <span class="va">$dir</span></a>
-<a class="sourceLine" id="cb6-52" data-line-number="52"></a>
-<a class="sourceLine" id="cb6-53" data-line-number="53"><span class="co"># Generate average coverage per base sequenced per animal</span></a>
-<a class="sourceLine" id="cb6-54" data-line-number="54"><span class="ex">samtools</span> depth <span class="va">${anim[$i]}</span>_uniq.bam  <span class="kw">|</span>  <span class="fu">awk</span> <span class="st">'{sum+=$3} END { print '</span><span class="va">${anim[$i]}</span><span class="st">' &quot;\t&quot; sum  &quot;\t&quot; NR &quot;\t&quot; ,sum/NR}'</span> <span class="op">&gt;&gt;</span> <span class="va">$out</span>/uniq_depth.txt</a>
-<a class="sourceLine" id="cb6-55" data-line-number="55"></a>
-<a class="sourceLine" id="cb6-56" data-line-number="56"><span class="co"># Generate average X coverage per genome size per animal</span></a>
-<a class="sourceLine" id="cb6-57" data-line-number="57"><span class="va">G=(</span><span class="kw">`</span><span class="ex">samtools</span> view -H <span class="va">${anim[$i]}</span>_uniq.bam <span class="kw">|</span> <span class="fu">grep</span> -P <span class="st">'^@SQ'</span> <span class="kw">|</span> <span class="fu">cut</span> -f 3 -d <span class="st">':'</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'{sum+=$1} END {print sum}'</span><span class="kw">`</span><span class="va">)</span></a>
-<a class="sourceLine" id="cb6-58" data-line-number="58"><span class="ex">samtools</span> depth <span class="va">${anim[$i]}</span>_uniq.bam  <span class="kw">|</span>  <span class="fu">awk</span> <span class="st">'{sum+=$3} END { print '</span><span class="va">${anim[$i]}</span><span class="st">' &quot;\t&quot; sum  &quot;\t&quot; '</span><span class="va">$G</span><span class="st">' &quot;\t&quot; ,sum/NR}'</span> <span class="op">&gt;&gt;</span> <span class="va">$out</span>/uniq_X_coverage.txt</a>
-<a class="sourceLine" id="cb6-59" data-line-number="59"></a>
-<a class="sourceLine" id="cb6-60" data-line-number="60"><span class="co"># Generate depth per chromosome</span></a>
-<a class="sourceLine" id="cb6-61" data-line-number="61"><span class="ex">samtools</span> idxstats <span class="va">${anim[$i]}</span>_uniq.bam <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'&quot;'&quot;'{print </span><span class="va">$1</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$3</span><span class="st">}'&quot;'&quot;'</span> <span class="op">&gt;</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt</a>
-<a class="sourceLine" id="cb6-62" data-line-number="62"><span class="bu">echo</span> chrAll <span class="kw">`</span><span class="fu">grep</span> chr <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt <span class="kw">|</span> <span class="fu">cut</span> -f2 -d<span class="st">' '</span> <span class="kw">|</span> <span class="ex">paste</span> -s -d+ <span class="kw">|</span> <span class="fu">bc</span><span class="kw">`</span> <span class="op">&gt;&gt;</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt</a>
-<a class="sourceLine" id="cb6-63" data-line-number="63"><span class="fu">sed</span> <span class="st">'s/ /\t/g'</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt <span class="op">&gt;</span> <span class="va">${anim[$i]}</span><span class="kw">;</span> <span class="fu">mv</span> <span class="va">${anim[$i]}</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt</a>
-<a class="sourceLine" id="cb6-64" data-line-number="64"></a>
-<a class="sourceLine" id="cb6-65" data-line-number="65"><span class="kw">done</span></a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co">#==============================================================================</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="co">#   File: depth.sh</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#   Directory code: $HOME/RNAseq_Pipeline/Depth/depth.sh</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#   Date: January 8, 2020</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#   Description: Obtain read depth for each animal unique mapped reads.</span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#   Run: bash depth.sh</span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#------------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#   Input files in directory:</span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#       $SCRATCH/HISAT2</span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#   Output files to directory:</span></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#       $HOME/RNAseq_Pipeline/Depth</span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">#</span></a>
+<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#   Output files:</span></a>
+<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">#       uniq_depth.txt</span></a>
+<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">#       uniq_X_coverage.txt</span></a>
+<a class="sourceLine" id="cb7-17" data-line-number="17"><span class="co">#==============================================================================</span></a>
+<a class="sourceLine" id="cb7-18" data-line-number="18"></a>
+<a class="sourceLine" id="cb7-19" data-line-number="19"><span class="co"># Input Directory</span></a>
+<a class="sourceLine" id="cb7-20" data-line-number="20"><span class="va">dir=$SCRATCH</span>/HISAT2</a>
+<a class="sourceLine" id="cb7-21" data-line-number="21"></a>
+<a class="sourceLine" id="cb7-22" data-line-number="22"><span class="co"># Output Directory</span></a>
+<a class="sourceLine" id="cb7-23" data-line-number="23"><span class="fu">mkdir</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth</a>
+<a class="sourceLine" id="cb7-24" data-line-number="24"><span class="va">out=$HOME</span>/RNAseq_Pipeline/Depth</a>
+<a class="sourceLine" id="cb7-25" data-line-number="25"></a>
+<a class="sourceLine" id="cb7-26" data-line-number="26"><span class="co"># Chromosome directory</span></a>
+<a class="sourceLine" id="cb7-27" data-line-number="27"><span class="fu">mkdir</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth/Chrom</a>
+<a class="sourceLine" id="cb7-28" data-line-number="28"><span class="va">chr=$HOME</span>/RNAseq_Pipeline/Depth/Chrom</a>
+<a class="sourceLine" id="cb7-29" data-line-number="29"></a>
+<a class="sourceLine" id="cb7-30" data-line-number="30"><span class="co"># Animal IDs</span></a>
+<a class="sourceLine" id="cb7-31" data-line-number="31"><span class="bu">cd</span> <span class="va">$SCRATCH</span>/RAW</a>
+<a class="sourceLine" id="cb7-32" data-line-number="32"><span class="va">anim=(</span><span class="kw">`</span><span class="fu">ls</span> *.fastq <span class="kw">|</span> <span class="fu">cut</span> -f1 -d_ <span class="kw">|</span> <span class="fu">uniq</span><span class="kw">`</span><span class="va">)</span></a>
+<a class="sourceLine" id="cb7-33" data-line-number="33"></a>
+<a class="sourceLine" id="cb7-34" data-line-number="34"><span class="co"># Move bash script to Depth directory</span></a>
+<a class="sourceLine" id="cb7-35" data-line-number="35"><span class="fu">mv</span> <span class="va">$HOME</span>/RNAseq_Pipeline/depth.sh <span class="va">$out</span></a>
+<a class="sourceLine" id="cb7-36" data-line-number="36"></a>
+<a class="sourceLine" id="cb7-37" data-line-number="37"><span class="co"># Load SamTools Module</span></a>
+<a class="sourceLine" id="cb7-38" data-line-number="38"><span class="ex">module</span> load SAMtools/1.9</a>
+<a class="sourceLine" id="cb7-39" data-line-number="39"></a>
+<a class="sourceLine" id="cb7-40" data-line-number="40"><span class="co"># Add column names to out files</span></a>
+<a class="sourceLine" id="cb7-41" data-line-number="41"><span class="bu">echo</span> Animal TotalCovered NucleotidesSequenced <span class="op">&gt;</span> <span class="va">$out</span>/uniq_depth.txt</a>
+<a class="sourceLine" id="cb7-42" data-line-number="42"><span class="fu">sed</span> -e <span class="st">'s/ /\t/'</span> <span class="va">$out</span>/uniq_depth.txt <span class="op">&gt;</span> tmp<span class="kw">;</span> <span class="fu">mv</span> tmp <span class="va">$out</span>/uniq_depth.txt</a>
+<a class="sourceLine" id="cb7-43" data-line-number="43"></a>
+<a class="sourceLine" id="cb7-44" data-line-number="44"><span class="bu">echo</span> Animal TotalCovered TotalGenomeSize <span class="op">&gt;</span> <span class="va">$out</span>/uniq_X_coverage.txt</a>
+<a class="sourceLine" id="cb7-45" data-line-number="45"><span class="fu">sed</span> -e <span class="st">'s/ /\t/'</span> <span class="va">$out</span>/uniq_X_coverage.txt <span class="op">&gt;</span> tmp<span class="kw">;</span> <span class="fu">mv</span> tmp <span class="va">$out</span>/uniq_X_coverage.txt</a>
+<a class="sourceLine" id="cb7-46" data-line-number="46"></a>
+<a class="sourceLine" id="cb7-47" data-line-number="47"><span class="co"># Calculate depth interactively per animal</span></a>
+<a class="sourceLine" id="cb7-48" data-line-number="48"><span class="kw">for</span> <span class="kw">((</span>i=0; i&lt;<span class="va">${#anim[@]}</span> ; i++ <span class="kw">))</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb7-49" data-line-number="49"></a>
+<a class="sourceLine" id="cb7-50" data-line-number="50"><span class="co"># Work directory</span></a>
+<a class="sourceLine" id="cb7-51" data-line-number="51"><span class="bu">cd</span> <span class="va">$dir</span></a>
+<a class="sourceLine" id="cb7-52" data-line-number="52"></a>
+<a class="sourceLine" id="cb7-53" data-line-number="53"><span class="co"># Generate average coverage per base sequenced per animal</span></a>
+<a class="sourceLine" id="cb7-54" data-line-number="54"><span class="ex">samtools</span> depth <span class="va">${anim[$i]}</span>_uniq.bam  <span class="kw">|</span>  <span class="fu">awk</span> <span class="st">'{sum+=$3} END { print '</span><span class="va">${anim[$i]}</span><span class="st">' &quot;\t&quot; sum  &quot;\t&quot; NR &quot;\t&quot; ,sum/NR}'</span> <span class="op">&gt;&gt;</span> <span class="va">$out</span>/uniq_depth.txt</a>
+<a class="sourceLine" id="cb7-55" data-line-number="55"></a>
+<a class="sourceLine" id="cb7-56" data-line-number="56"><span class="co"># Generate average X coverage per genome size per animal</span></a>
+<a class="sourceLine" id="cb7-57" data-line-number="57"><span class="va">G=(</span><span class="kw">`</span><span class="ex">samtools</span> view -H <span class="va">${anim[$i]}</span>_uniq.bam <span class="kw">|</span> <span class="fu">grep</span> -P <span class="st">'^@SQ'</span> <span class="kw">|</span> <span class="fu">cut</span> -f 3 -d <span class="st">':'</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'{sum+=$1} END {print sum}'</span><span class="kw">`</span><span class="va">)</span></a>
+<a class="sourceLine" id="cb7-58" data-line-number="58"><span class="ex">samtools</span> depth <span class="va">${anim[$i]}</span>_uniq.bam  <span class="kw">|</span>  <span class="fu">awk</span> <span class="st">'{sum+=$3} END { print '</span><span class="va">${anim[$i]}</span><span class="st">' &quot;\t&quot; sum  &quot;\t&quot; '</span><span class="va">$G</span><span class="st">' &quot;\t&quot; ,sum/NR}'</span> <span class="op">&gt;&gt;</span> <span class="va">$out</span>/uniq_X_coverage.txt</a>
+<a class="sourceLine" id="cb7-59" data-line-number="59"></a>
+<a class="sourceLine" id="cb7-60" data-line-number="60"><span class="co"># Generate depth per chromosome</span></a>
+<a class="sourceLine" id="cb7-61" data-line-number="61"><span class="ex">samtools</span> idxstats <span class="va">${anim[$i]}</span>_uniq.bam <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'&quot;'&quot;'{print </span><span class="va">$1</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$3</span><span class="st">}'&quot;'&quot;'</span> <span class="op">&gt;</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt</a>
+<a class="sourceLine" id="cb7-62" data-line-number="62"><span class="bu">echo</span> chrAll <span class="kw">`</span><span class="fu">grep</span> chr <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt <span class="kw">|</span> <span class="fu">cut</span> -f2 -d<span class="st">' '</span> <span class="kw">|</span> <span class="ex">paste</span> -s -d+ <span class="kw">|</span> <span class="fu">bc</span><span class="kw">`</span> <span class="op">&gt;&gt;</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt</a>
+<a class="sourceLine" id="cb7-63" data-line-number="63"><span class="fu">sed</span> <span class="st">'s/ /\t/g'</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt <span class="op">&gt;</span> <span class="va">${anim[$i]}</span><span class="kw">;</span> <span class="fu">mv</span> <span class="va">${anim[$i]}</span> <span class="va">$chr</span>/<span class="va">${anim[$i]}</span>_uniq_chr_depth.txt</a>
+<a class="sourceLine" id="cb7-64" data-line-number="64"></a>
+<a class="sourceLine" id="cb7-65" data-line-number="65"><span class="kw">done</span></a></code></pre></div>
 <blockquote>
 <p>Run script interactively.</p>
 </blockquote>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="fu">bash</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth/depth.sh</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="fu">bash</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth/depth.sh</a></code></pre></div>
 <p>This script will run interactively in your terminal by using a <code>for</code> loop. Once finished review the average coverage per seuqenced base:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="fu">less</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth/uniq_depth.txt</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="fu">less</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth/uniq_depth.txt</a></code></pre></div>
 <p>And the average X coverage</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="fu">less</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth/uniq_X_coverage.txt</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="fu">less</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth/uniq_X_coverage.txt</a></code></pre></div>
 <p>The depth per chromosome was also calculated per animal. These text files were saved in the <code>Chrom</code> directory.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="bu">cd</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth/Chrom</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="fu">cat</span> <span class="kw">`</span><span class="fu">ls</span> *_uniq_chr_depth.txt <span class="kw">|</span> <span class="fu">head</span> -1<span class="kw">`</span></a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="bu">cd</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Depth/Chrom</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="fu">cat</span> <span class="kw">`</span><span class="fu">ls</span> *_uniq_chr_depth.txt <span class="kw">|</span> <span class="fu">head</span> -1<span class="kw">`</span></a></code></pre></div>
 </div>
+<div id="build-poteintial-transcripts" class="section level3">
+<h3>Build poteintial transcripts</h3>
+<p>StringTie will be used to assemble transcriptomes per file. Refer to the <a href="https://ccb.jhu.edu/software/stringtie/index.shtml?t=manual">StringTie mannual</a> for futher options that ones used in this tutorial.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="fu">nano</span> <span class="va">$HOME</span>/RNAseq_Pipeline/StringTie.sh</a></code></pre></div>
+<blockquote>
+<p>Copy the following script and paste in the terminal editor window.</p>
+</blockquote>
 </div>
 </div><!-- /.entry-content -->
 </article>

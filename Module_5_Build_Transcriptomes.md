@@ -1,4 +1,3 @@
-
 ---
 title: Assemble Potential Transcripts
 author: Deborah Velez-Irizarry
