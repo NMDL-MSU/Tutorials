@@ -152,6 +152,13 @@ nano $HOME/RNAseq_Pipeline/depth.sh
 > Copy the following script and paste in the terminal editor window.
 
 ```bash
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=1
+#SBATCH --time=08:00:00
+#SBATCH --mem=100G
+#SBATCH -J 'depth'
+#SBATCH -o '$HOME/RNAseq_Pipeline/Depth/depth.o%j'
 #==============================================================================
 #   File: depth.sh
 #   Directory code: $HOME/RNAseq_Pipeline/Depth/depth.sh
@@ -225,6 +232,9 @@ sed 's/ /\t/g' $chr/${anim[$i]}_uniq_chr_depth.txt > ${anim[$i]}; mv ${anim[$i]}
 	 $chr/${anim[$i]}_uniq_chr_depth.txt
 
 done
+
+# Run statistics
+scontrol show job $SLURM_JOB_ID
 ```
 
 > Run script interactively.
@@ -364,4 +374,6 @@ errors before procceding to the next step.
 cd $HOME/RNAseq_Pipeline/StringTie/qstat
 checkJobs
 ```
+
+![](https://user-images.githubusercontent.com/44003875/72020031-dc12d300-3238-11ea-8d8a-474a9369253b.jpg)
 
