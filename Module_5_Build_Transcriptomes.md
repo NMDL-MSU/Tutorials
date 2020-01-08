@@ -1,7 +1,8 @@
+
 ---
 title: Assemble Potential Transcripts
 author: Deborah Velez-Irizarry
-date: Updated Jan 6 2020
+date: Updated Jan 8 2020
 output:
   prettydoc::html_pretty:
     theme: hpstr
@@ -36,6 +37,103 @@ ssh -YX username@gateway.hpcc.msu.edu
 If you are using the remote desktop environment login to your terminal 
 through the Web-based remote desktop: [Web site access to HPCC](https://wiki.hpcc.msu.edu/display/ITH/Web+Site+Access+to+HPCC)
 
+### Sort BAM Files
+
+SAMtools has several utilities for sequence alignment and mapping for SAM/BAM format. 
+It is also commonly used to call variants from RNAseq data. The [SamTools Mannual](http://www.htslib.org/doc/samtools.1.html)
+can be of use if you wish to look at specific regions in your BAM files or merge files 
+together. The SAM flag in `samtools view` is used to index your reads based on certain properties,
+such as read first pair, read mapped in proper pair, read rever strand or any combination. 
+The [Picard flags page](https://broadinstitute.github.io/picard/explain-flags.html) is a great resource to 
+obtain a SAM Flag based on user specified properties. In this tutorial we will use samtools to 
+calculate dapth of coverage. In this step we will use SAMtools to sort the BAM files containing the unique 
+reads.
+
+
+```bash
+nano $HOME/RNAseq_Pipeline/SortBAM.sh
+```
+
+> Copy the following script and paste in the terminal editor window.
+
+#==============================================================================
+#   File: SortBAM.sh
+#   Directory code: $HOME/RNAseq_Pipeline/HISAT2
+#   Date: January 8, 2020
+#   Description: Sort unique BAM files
+#   Run: bash SortBAM.sh
+#------------------------------------------------------------------------------
+#   Input files in directory:
+#       $SCRATCH/HISAT2
+#
+#   Output files to directory:
+#       $SCRATCH/HISAT2
+#==============================================================================
+
+# Animal IDs
+cd $SCRATCH/RAW
+anim=(`ls *.fastq | cut -f1 -d_ | uniq`)
+
+# Work Directory
+dir=$HOME/RNAseq_Pipeline/HISAT2
+
+# Input Directory
+inp=$SCRATCH/HISAT2
+
+# Output Directory
+out=$SCRATCH/HISAT2
+
+# Qstat directory
+mkdir $HOME/RNAseq_Pipeline/HISAT2/qstat/sort
+qstat=$HOME/RNAseq_Pipeline/HISAT2/qstat/sort
+
+# Move script to directory
+mv $HOME/RNAseq_Pipeline/SortBAM.sh $dir
+
+# Write bash script for each animal
+for ((i=0; i<${#anim[@]} ; i++ )) do
+echo '#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=1
+#SBATCH --time=04:00:00
+#SBATCH --mem=50G
+#SBATCH -J '${anim[$i]}_sortBAM'
+#SBATCH -o '${anim[$i]}_sortBAM.o%j'
+
+# Work Directory
+cd '$out'
+
+# Load required modules
+module load SAMtools/1.9
+
+# Module List
+module list
+
+# Sort BAM files
+samtools sort -o '$out/${anim[$i]}'_uniq_sorted.bam '$inp/${anim[$i]}'_uniq.bam   
+
+# Run statistics
+scontrol show job $SLURM_JOB_ID' > $qstat/${anim[$i]}.qsub
+
+# Submit script to hpcc
+cd $qstat
+sbatch ${anim[$i]}.qsub
+
+done
+```
+> Run master script.
+
+```bash
+bash $HOME/RNAseq_Pipeline/SortBAM.sh
+```
+
+Check submitted jobs `sq`. When all jobs have completed, check for errors before 
+procceding to the next step.
+
+```bash
+cd $HOME/RNAseq_Pipeline/HISAT2/qstat/sort
+checkJobs
+```
 
 ### Obtain depth of coverage
 
@@ -45,15 +143,6 @@ number of counts per covered regions over the total number of nucleotides sequen
 This will be estimated per bam file using Samtools. Another estimate of coverage is the 
 average X coverage were instead of dividing by the total number of nucleotides sequenced, you
 divide by the total genome size.
-
-Samtools has several utilities for sequence alignment and mapping for SAM/BAM format. 
-It is also commonly used to call variants from RNAseq data. The [SamTools Mannual](http://www.htslib.org/doc/samtools.1.html)
-can be of use if you wish to look at specific regions in your BAM files or merge files 
-together. The SAM flag in `samtools view` is used to index your reads based on certain properties,
-such as read first pair, read mapped in proper pair, read rever strand or any combination. 
-The [Picard flags page](https://broadinstitute.github.io/picard/explain-flags.html) is a great resource to 
-obtain a SAM Flag based on user specified properties. In this tutorial we will use samtools to 
-calculate dapth of coverage. 
 
 ```bash
 nano $HOME/RNAseq_Pipeline/depth.sh
@@ -65,7 +154,7 @@ nano $HOME/RNAseq_Pipeline/depth.sh
 #==============================================================================
 #   File: depth.sh
 #   Directory code: $HOME/RNAseq_Pipeline/Depth/depth.sh
-#   Date: January 6, 2020
+#   Date: January 8, 2020
 #   Description: Obtain read depth for each animal unique mapped reads.
 #   Run: bash depth.sh
 #------------------------------------------------------------------------------
@@ -155,5 +244,4 @@ The depth per chromosome was also calculated per animal. These text files were s
 cd $HOME/RNAseq_Pipeline/Depth/Chrom
 cat `ls *_uniq_chr_depth.txt | head -1`
 ```
-
 
