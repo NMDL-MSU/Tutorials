@@ -10,9 +10,6 @@ output:
     toc: true
 ---
 
-```{r, echo = FALSE, message = FALSE}  
-opts_chunk$set(tidy=TRUE)
-```
 
 ### Description
 In this tutorial, we will cover how to download a reference genome, 
