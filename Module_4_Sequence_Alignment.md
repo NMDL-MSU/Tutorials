@@ -2,7 +2,7 @@
 ---
 title: RNA Sequence Alignment
 author: Deborah Velez-Irizarry
-date: Updated Jan 6 2020
+date: Updated Jan 8 2020
 output:
   prettydoc::html_pretty:
     theme: hpstr
@@ -10,7 +10,8 @@ output:
     toc: true
 ---
 
-
+```{r echo = FALSE, message = FALSE}
+opts_chunk$set(tidy=TRUE)
 
 ### Description
 In this tutorial, we will cover how to download a reference genome, 
@@ -594,7 +595,7 @@ rm drop
 # Total Aligned
 map=(`grep aligned '$dir/${anim[$i]}'_stats.txt | head -2 | cut -f2 -d'"'"' '"'"' | paste -sd+ - | bc`)
 tot=(`cat '$dir/${anim[$i]}'_stats.txt | cut -f2 -d'"'"' '"'"' | head -1`)
-echo total_aligned_reads `echo $map` >> '${anim[$i]}'_stats.txt
+echo total_aligned_reads `echo $map` >> $dir/'${anim[$i]}'_stats.txt
 echo alignment_rate '"'"'0'"'"'`echo "scale=6 ; ($map / $tot)" | bc` >> '$dir/${anim[$i]}'_stats.txt
 
 # Total Uniquely Aligned

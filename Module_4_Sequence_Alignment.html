@@ -142,7 +142,7 @@ code span.ot { color: #007020; }
 <div class="header-title-wrap">
 <h1 class="title toc-ignore entry-title">RNA Sequence Alignment</h1>
 <h3 class="author">Deborah Velez-Irizarry</h3>
-<h3 class="date">Updated Jan 6 2020</h3>
+<h3 class="date">Updated Jan 8 2020</h3>
 </div><!-- /.header-title-wrap -->
 </header>
 
@@ -160,6 +160,7 @@ code span.ot { color: #007020; }
 </ul>
 </div>
 
+<p>```{r echo = FALSE, message = FALSE} opts_chunk$set(tidy=TRUE)</p>
 <div id="description" class="section level3">
 <h3>Description</h3>
 <p>In this tutorial, we will cover how to download a reference genome, build a reference index with HISAT2 build and short read alignment with HISAT2.</p>
@@ -657,7 +658,7 @@ code span.ot { color: #007020; }
 <a class="sourceLine" id="cb18-75" data-line-number="75"><span class="st"># Total Aligned</span></a>
 <a class="sourceLine" id="cb18-76" data-line-number="76"><span class="st">map=(`grep aligned '</span><span class="va">$dir</span>/<span class="va">${anim[$i]}</span><span class="st">'_stats.txt | head -2 | cut -f2 -d'&quot;'&quot;' '&quot;'&quot;' | paste -sd+ - | bc`)</span></a>
 <a class="sourceLine" id="cb18-77" data-line-number="77"><span class="st">tot=(`cat '</span><span class="va">$dir</span>/<span class="va">${anim[$i]}</span><span class="st">'_stats.txt | cut -f2 -d'&quot;'&quot;' '&quot;'&quot;' | head -1`)</span></a>
-<a class="sourceLine" id="cb18-78" data-line-number="78"><span class="st">echo total_aligned_reads `echo $map` &gt;&gt; '</span><span class="va">${anim[$i]}</span><span class="st">'_stats.txt</span></a>
+<a class="sourceLine" id="cb18-78" data-line-number="78"><span class="st">echo total_aligned_reads `echo $map` &gt;&gt; $dir/'</span><span class="va">${anim[$i]}</span><span class="st">'_stats.txt</span></a>
 <a class="sourceLine" id="cb18-79" data-line-number="79"><span class="st">echo alignment_rate '&quot;'&quot;'0'&quot;'&quot;'`echo &quot;scale=6 ; ($map / $tot)&quot; | bc` &gt;&gt; '</span><span class="va">$dir</span>/<span class="va">${anim[$i]}</span><span class="st">'_stats.txt</span></a>
 <a class="sourceLine" id="cb18-80" data-line-number="80"></a>
 <a class="sourceLine" id="cb18-81" data-line-number="81"><span class="st"># Total Uniquely Aligned</span></a>
