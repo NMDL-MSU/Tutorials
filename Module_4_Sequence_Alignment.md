@@ -10,7 +10,7 @@ output:
     toc: true
 ---
 
-```r echo = FALSE, message = FALSE
+```r echo = FALSE, message = FALSE  
 opts_chunk$set(tidy=TRUE)
 ```
 
