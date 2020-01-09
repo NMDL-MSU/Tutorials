@@ -1,4 +1,17 @@
 
+---
+title: Assemble Potential Transcripts
+author: Deborah Velez-Irizarry
+date: Updated Jan 8 2020
+output:
+  prettydoc::html_pretty:
+    theme: hpstr
+    highlight: github
+    toc: true
+---
+
+
+
 ### Description
 In this tutorial, we will cover how to assemble each bam file into potential transcripts. 
 
@@ -454,7 +467,5 @@ bash $HOME/RNAseq_Pipeline/MergeGTF.sh
 
 
 I hope you enjoyed this tutorial. Send any comments or suggestions to velezdeb@msu.edu.
-
-
 
 
