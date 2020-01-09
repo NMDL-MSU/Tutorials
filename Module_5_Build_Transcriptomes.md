@@ -2,7 +2,7 @@
 ---
 title: Assemble Potential Transcripts
 author: Deborah Velez-Irizarry
-date: Updated Jan 8 2020
+date: Updated Jan 9 2020
 output:
   prettydoc::html_pretty:
     theme: hpstr
