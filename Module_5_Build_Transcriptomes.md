@@ -1,4 +1,17 @@
 
+---
+title: Assemble Potential Transcripts
+author: Deborah Velez-Irizarry
+date: Updated Jan 8 2020
+output:
+  prettydoc::html_pretty:
+    theme: hpstr
+    highlight: github
+    toc: true
+---
+
+
+
 ### Description
 In this tutorial, we will cover how to assemble each bam file into potential transcripts. 
 
@@ -390,7 +403,7 @@ nano $HOME/RNAseq_Pipeline/MergeGTF.sh
 #       $HOME/RNAseq_Pipeline/Reference/*gtf
 #
 #   Output files to directory:
-#       $SCRATCH/StringTie/Merged/merged.gtf
+#       $HOME/StringTie/Merged/merged.gtf
 #==============================================================================
 
 # Work Directory
@@ -411,7 +424,7 @@ nm=(`ls *.ht2 | cut -f1 -d. | cut -f2 -d_ | uniq`)
 gtf=$HOME/RNAseq_Pipeline/Reference/$nm.gtf
 
 # Move script to directory
-mv $HOME/RNAseq_Pipeline/MergeGTF $dir
+mv $HOME/RNAseq_Pipeline/MergeGTF.sh $dir
 mv $SCRATCH/HISAT2/*.gtf $out
 
 # Write bash script for each animal
@@ -454,6 +467,5 @@ bash $HOME/RNAseq_Pipeline/MergeGTF.sh
 
 
 I hope you enjoyed this tutorial. Send any comments or suggestions to velezdeb@msu.edu.
-
 
 
