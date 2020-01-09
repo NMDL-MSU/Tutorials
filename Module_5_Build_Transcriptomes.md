@@ -1,17 +1,4 @@
 
----
-title: Assemble Potential Transcripts
-author: Deborah Velez-Irizarry
-date: Updated Jan 8 2020
-output:
-  prettydoc::html_pretty:
-    theme: hpstr
-    highlight: github
-    toc: true
----
-
-
-
 ### Description
 In this tutorial, we will cover how to assemble each bam file into potential transcripts. 
 
@@ -342,7 +329,7 @@ module list
 
 # Build transcriptome StringTie
 stringtie '$bam/${anim[$i]}'_uniq_sorted.bam -G '$gtf' \
-	--rf -p 12 -o '$bam/${anim[$i]}'.gtf
+	--rf -p 12 -o '${anim[$i]}'.gtf
 
 # Run statistics
 scontrol show job $SLURM_JOB_ID' > $qstat/${anim[$i]}.qsub
@@ -467,5 +454,7 @@ bash $HOME/RNAseq_Pipeline/MergeGTF.sh
 
 
 I hope you enjoyed this tutorial. Send any comments or suggestions to velezdeb@msu.edu.
+
+
 
 
