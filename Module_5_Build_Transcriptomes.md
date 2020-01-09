@@ -1,15 +1,3 @@
----
-title: Assemble Potential Transcripts
-author: Deborah Velez-Irizarry
-date: Updated Jan 8 2020
-output:
-  prettydoc::html_pretty:
-    theme: hpstr
-    highlight: github
-    toc: true
----
-
-
 
 ### Description
 In this tutorial, we will cover how to assemble each bam file into potential transcripts. 
@@ -152,17 +140,10 @@ nano $HOME/RNAseq_Pipeline/depth.sh
 > Copy the following script and paste in the terminal editor window.
 
 ```bash
-#!/bin/bash
-#SBATCH --nodes=1
-#SBATCH --cpus-per-task=1
-#SBATCH --time=08:00:00
-#SBATCH --mem=100G
-#SBATCH -J 'depth'
-#SBATCH -o '$HOME/RNAseq_Pipeline/Depth/depth.o%j'
 #==============================================================================
 #   File: depth.sh
 #   Directory code: $HOME/RNAseq_Pipeline/Depth/depth.sh
-#   Date: January 8, 2020
+#   Date: January 9, 2020
 #   Description: Obtain read depth for each animal unique mapped reads.
 #   Run: bash depth.sh
 #------------------------------------------------------------------------------
@@ -173,8 +154,9 @@ nano $HOME/RNAseq_Pipeline/depth.sh
 #       $HOME/RNAseq_Pipeline/Depth
 #
 #   Output files:
-#       uniq_depth.txt
-#		uniq_X_coverage.txt
+#       *uniq_depth.txt
+#		*uniq_X_coverage.txt
+#		./Chrom/*uniq_chr_depth.txt
 #==============================================================================
 
 # Input Directory
@@ -287,7 +269,7 @@ nano $HOME/RNAseq_Pipeline/StringTie.sh
 #==============================================================================
 #   File: StringTie.sh
 #   Directory code: $HOME/RNAseq_Pipeline/StringTie
-#   Date: January 8, 2020
+#   Date: January 9, 2020
 #   Description: Assemble the transcriptome of each sample using
 #                the uniquely mapped reads.
 #   Run: bash StringTie.sh
@@ -297,7 +279,7 @@ nano $HOME/RNAseq_Pipeline/StringTie.sh
 #       $HOME/RNAseq_Pipeline/Reference/Index
 #
 #   Output files to directory:
-#       $SCRATCH/StringTie
+#       $HOME/StringTie
 #==============================================================================
 
 # Animal IDs
@@ -313,11 +295,11 @@ mkdir $SCRATCH/StringTie
 out=$SCRATCH/StringTie
 
 # Qstat directory
-mkdir $SCRATCH/StringTie/qstat
-qstat=$SCRATCH/StringTie/qstat
+mkdir $HOME/StringTie/qstat
+qstat=$HOME/StringTie/qstat
 
 # Input Directory
-bam=$SCRATCH/HISATS
+bam=$SCRATCH/HISAT2
 cd $HOME/RNAseq_Pipeline/Reference/Index
 nm=(`ls *.ht2 | cut -f1 -d. | cut -f2 -d_ | uniq`)
 gtf=$HOME/RNAseq_Pipeline/Reference/$nm.gtf
@@ -373,5 +355,105 @@ cd $HOME/RNAseq_Pipeline/StringTie/qstat
 checkJobs
 ```
 
-![](https://user-images.githubusercontent.com/44003875/72020031-dc12d300-3238-11ea-8d8a-474a9369253b.jpg)
+
+### Merge Annotations
+
+StringTie will be used to generate a cancatenaded GTF file containing a non-redundent
+set of transcripts from your data. We will provide the reference GTF file along with the 
+assembled transcripts GTFs to unify isoforms from yoru samples and the reference.
+Refer to the [StringTie mannual](https://ccb.jhu.edu/software/stringtie/index.shtml?t=manual)
+for further optional parameters than the ones used in this tutorial. 
+
+We will run stringtie with the following options:
+
+> `--merge` sringtie transcript merge mode. 
+> `-G` reference annotation file (gtf)  
+> `-m 50` Minium input transcript length to include in the merge 
+> `- o` parameter to set the name of the output gtf file   
+
+```bash
+nano $HOME/RNAseq_Pipeline/MergeGTF.sh
+```
+
+> Copy the following script and paste in the terminal editor window.
+
+```bash
+#==============================================================================
+#   File: MergeGTF.sh
+#   Directory code: $HOME/RNAseq_Pipeline/MergeGTF.sh
+#   Date: January 9, 2020
+#   Description: Merge the annotations generated from StringTie.
+#   Run: bash StringTie.sh
+#------------------------------------------------------------------------------
+#   Input files in directory:
+#       $SCRATCH/StringTie
+#       $HOME/RNAseq_Pipeline/Reference/*gtf
+#
+#   Output files to directory:
+#       $SCRATCH/StringTie/Merged/merged.gtf
+#==============================================================================
+
+# Work Directory
+dir=$HOME/RNAseq_Pipeline/StringTie
+
+# Output Directory
+mkdir $HOME/StringTie/Merged
+out=$HOME/StringTie/Merged
+
+# Qstat directory
+mv $SCRATCH/StringTie/qstat $HOME/StringTie/
+qstat=$HOME/StringTie/qstat
+
+# Input Directory
+Agtf=$SCRATCH/StringTie
+cd $HOME/RNAseq_Pipeline/Reference/Index
+nm=(`ls *.ht2 | cut -f1 -d. | cut -f2 -d_ | uniq`)
+gtf=$HOME/RNAseq_Pipeline/Reference/$nm.gtf
+
+# Move script to directory
+mv $HOME/RNAseq_Pipeline/MergeGTF $dir
+mv $SCRATCH/HISAT2/*.gtf $out
+
+# Write bash script for each animal
+echo '#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=12
+#SBATCH --time=04:00:00
+#SBATCH --mem=100G
+#SBATCH -J 'merge'
+#SBATCH -o 'merge.o%j'
+
+# Work Directory
+cd '$out'
+
+# Load required modules
+module load GCCcore/6.4.0
+module load StringTie/1.3.5
+
+# Module List
+module list
+
+# Build transcriptome StringTie
+stringtie --merge '$Agtf/*' -G '$gtf' -m 50 -o merged.gtf
+
+# Run statistics
+scontrol show job $SLURM_JOB_ID' > $qstat/merge.qsub
+
+# Submit script to hpcc
+cd $qstat
+sbatch MergeGTF.qsub
+
+done
+```
+
+> Run script.
+
+```bash
+bash $HOME/RNAseq_Pipeline/MergeGTF.sh
+```
+
+
+I hope you enjoyed this tutorial. Send any comments or suggestions to velezdeb@msu.edu.
+
+
 
