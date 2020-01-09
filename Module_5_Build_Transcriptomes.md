@@ -307,8 +307,8 @@ mkdir $SCRATCH/StringTie
 out=$SCRATCH/StringTie
 
 # Qstat directory
-mkdir $HOME/StringTie/qstat
-qstat=$HOME/StringTie/qstat
+mkdir $HOME/RNAseq_Pipeline/StringTie/qstat
+qstat=$HOME/RNAseq_Pipeline/StringTie/qstat
 
 # Input Directory
 bam=$SCRATCH/HISAT2
@@ -402,18 +402,18 @@ nano $HOME/RNAseq_Pipeline/MergeGTF.sh
 #       $HOME/RNAseq_Pipeline/Reference/*gtf
 #
 #   Output files to directory:
-#       $HOME/StringTie/Merged/merged.gtf
+#       $HOME/RNAseq_Pipeline/StringTie/Merged/merged.gtf
 #==============================================================================
 
 # Work Directory
 dir=$HOME/RNAseq_Pipeline/StringTie
 
 # Output Directory
-mkdir $HOME/StringTie/Merged
-out=$HOME/StringTie/Merged
+mkdir $HOME/RNAseq_Pipeline/StringTie/Merged
+out=$HOME/RNAseq_Pipeline/StringTie/Merged
 
 # Qstat directory
-qstat=$HOME/StringTie/qstat
+qstat=$HOME/RNAseq_Pipeline/StringTie/qstat
 
 # Input Directory
 Agtf=$SCRATCH/StringTie
@@ -462,5 +462,6 @@ bash $HOME/RNAseq_Pipeline/MergeGTF.sh
 
 
 I hope you enjoyed this tutorial. Send any comments or suggestions to velezdeb@msu.edu.
+
 
 
