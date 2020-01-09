@@ -456,7 +456,6 @@ scontrol show job $SLURM_JOB_ID' > $qstat/merge.qsub
 cd $qstat
 sbatch MergeGTF.qsub
 
-done
 ```
 
 > Run script.
