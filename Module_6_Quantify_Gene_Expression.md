@@ -92,6 +92,7 @@ qstst=$HOME/RNAseq_Pipeline/HTSeq/Counts/qstat
 # Create virtual environment to install the required python packages
 virtualenv $home/htseq
 source $home/htseq/bin/activate
+pip install numpy
 pip install HTSeq
 deactivate
 act=$home/htseq/bin/activate
