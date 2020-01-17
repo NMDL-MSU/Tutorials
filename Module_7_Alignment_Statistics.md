@@ -1,4 +1,3 @@
-
 ---
 title: Alignment Statistics RNA-seq Pipeline
 author: Deborah Velez-Irizarry
@@ -411,8 +410,7 @@ cd $HOME/RNAseq_Pipeline
 Once the script finishes copy the HTML file to your desktop and open in your
 browser. Use the information in the the HTML to fill out your pipeline summary:
 
-![](https://user-images.githubusercontent.com/44003875/72630804-19561f80-3921-11ea-8f2c-7024aedd8ddd.png)
-
+![](https://user-images.githubusercontent.com/44003875/72632103-91254980-3923-11ea-8972-be7f3704f4fc.png)
 
 I hope you enjoyed this tutorial. Send any comments or suggestions to velezdeb@msu.edu.
 
