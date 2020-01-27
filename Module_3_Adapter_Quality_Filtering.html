@@ -142,7 +142,7 @@ code span.ot { color: #007020; }
 <div class="header-title-wrap">
 <h1 class="title toc-ignore entry-title">Adapter and Quality Filtering</h1>
 <h3 class="author">Deborah Velez-Irizarry</h3>
-<h3 class="date">Updated Jan 6 2020</h3>
+<h3 class="date">Updated Jan 27, 2020</h3>
 </div><!-- /.header-title-wrap -->
 </header>
 
@@ -373,13 +373,13 @@ Drop reads with a minumin length of 75 bases.</p>
 <p>Submit the master script for Trimmomatic to the SLURM scheduler.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="fu">bash</span> <span class="va">$HOME</span>/RNAseq_Pipeline/adapter_trimming.sh</a></code></pre></div>
 <p>This step should take about an hour to run. Wait until all jobs have finished before continuing to the step. To check the jobs status use <code>qs</code>. When all jobs have finished run the checkjobs within the <code>qstat</code> directory to make sure the jobs ran with no errors.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="bu">cd</span> <span class="va">$HOME</span>/Trimmomatic/qstat</a>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="bu">cd</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Trimmomatic/qstat</a>
 <a class="sourceLine" id="cb8-2" data-line-number="2"><span class="ex">checkJobs</span></a></code></pre></div>
 </div>
 <div id="generate-summary-for-quality-trimming" class="section level3">
 <h3>Generate summary for quality trimming</h3>
 <p>To keep a complete documentation of retained and dropped reads we will create a summary file for each step in the RNA-seq bioinformatic pipeline. We will extract this information from the job outfiles (one per animal or animal-timepoint depending on the experimental design). Let us look at how this information is provided by Trimmomatic:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="bu">cd</span> <span class="va">$SCRATCH</span>/Trimmomatic/qstat</a>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="bu">cd</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Trimmomatic/qstat</a>
 <a class="sourceLine" id="cb9-2" data-line-number="2"><span class="fu">cat</span> <span class="kw">`</span><span class="fu">ls</span> <span class="kw">|</span> <span class="fu">grep</span> -v qsub <span class="kw">|</span> <span class="fu">head</span> -1<span class="kw">`</span></a></code></pre></div>
 <p>Observe the number provided for <code>Input Read Pair</code>, <code>Both Surviving</code>, <code>Forward Only Surviving</code>, <code>Reverse Only Surviving</code>, and <code>Dropped</code>. Notice that this quality step generates both paired and single reads. This happens when the trimming results in a complete loss of one of the read paires. We will extract this information for each of the jobs submitted and save it to a tab delimited matrix that we will use at the end of the pipeline to asses retained and loss reads.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="fu">nano</span> <span class="va">$HOME</span>/RNAseq_Pipeline/merge_rst_trim_adapters.sh</a></code></pre></div>

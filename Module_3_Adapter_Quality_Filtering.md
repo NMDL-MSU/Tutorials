@@ -1,7 +1,7 @@
 ---
 title: Adapter and Quality Filtering
 author: Deborah Velez-Irizarry
-date: Updated Jan 6 2020
+date: Updated Jan 27, 2020
 output:
   prettydoc::html_pretty:
     theme: hpstr
@@ -273,7 +273,7 @@ When all jobs have finished run the checkjobs within the `qstat` directory
 to make sure the jobs ran with no errors. 
 
 ```bash
-cd $HOME/Trimmomatic/qstat
+cd $HOME/RNAseq_Pipeline/Trimmomatic/qstat
 checkJobs
 ```
 
@@ -286,7 +286,7 @@ animal-timepoint depending on the experimental design). Let us look at how
 this information is provided by Trimmomatic:
 
 ```bash
-cd $SCRATCH/Trimmomatic/qstat
+cd $HOME/RNAseq_Pipeline/Trimmomatic/qstat
 cat `ls | grep -v qsub | head -1`
 ```
 
