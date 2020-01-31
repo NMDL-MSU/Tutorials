@@ -142,7 +142,7 @@ code span.ot { color: #007020; }
 <div class="header-title-wrap">
 <h1 class="title toc-ignore entry-title">Assessing Read Quality</h1>
 <h3 class="author">Deborah Velez-Irizarry</h3>
-<h3 class="date">Updated Jan 6 2020</h3>
+<h3 class="date">Updated Jan 31 2020</h3>
 </div><!-- /.header-title-wrap -->
 </header>
 
@@ -627,7 +627,7 @@ code span.ot { color: #007020; }
 <a class="sourceLine" id="cb32-9" data-line-number="9"><span class="co">#==============================================================================</span></a>
 <a class="sourceLine" id="cb32-10" data-line-number="10"><span class="co">#   File: multiQC_raw.sh</span></a>
 <a class="sourceLine" id="cb32-11" data-line-number="11"><span class="co">#   Directory code: $HOME/RNAseq_Pipeline/Quality/Raw/MultiQC</span></a>
-<a class="sourceLine" id="cb32-12" data-line-number="12"><span class="co">#   Date: January 6, 2020</span></a>
+<a class="sourceLine" id="cb32-12" data-line-number="12"><span class="co">#   Date: January 31, 2020</span></a>
 <a class="sourceLine" id="cb32-13" data-line-number="13"><span class="co">#   Description: Concatenate FASTQC quality reports into a single file.</span></a>
 <a class="sourceLine" id="cb32-14" data-line-number="14"><span class="co">#   Run: sbatch multiQC_raw.sh</span></a>
 <a class="sourceLine" id="cb32-15" data-line-number="15"><span class="co">#------------------------------------------------------------------------------</span></a>
@@ -639,37 +639,39 @@ code span.ot { color: #007020; }
 <a class="sourceLine" id="cb32-21" data-line-number="21"><span class="co">#==============================================================================</span></a>
 <a class="sourceLine" id="cb32-22" data-line-number="22"></a>
 <a class="sourceLine" id="cb32-23" data-line-number="23"><span class="co">### Directory input files</span></a>
-<a class="sourceLine" id="cb32-24" data-line-number="24"><span class="va">Qrep=$HOME</span>/RNAseq_Pipeline/Quality/Raw</a>
-<a class="sourceLine" id="cb32-25" data-line-number="25"></a>
-<a class="sourceLine" id="cb32-26" data-line-number="26"><span class="co">### Directory output files</span></a>
-<a class="sourceLine" id="cb32-27" data-line-number="27"><span class="co">## Create MultiQC output directory</span></a>
-<a class="sourceLine" id="cb32-28" data-line-number="28"><span class="fu">mkdir</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Quality/Raw/MultiQC</a>
-<a class="sourceLine" id="cb32-29" data-line-number="29"></a>
-<a class="sourceLine" id="cb32-30" data-line-number="30"><span class="co"># Output directory</span></a>
-<a class="sourceLine" id="cb32-31" data-line-number="31"><span class="va">QC=$HOME</span>/RNAseq_Pipeline/Quality/Raw/MultiQC</a>
-<a class="sourceLine" id="cb32-32" data-line-number="32"></a>
-<a class="sourceLine" id="cb32-33" data-line-number="33"><span class="co">#' Create virtual environment</span></a>
-<a class="sourceLine" id="cb32-34" data-line-number="34"><span class="bu">cd</span> <span class="va">$QC</span></a>
-<a class="sourceLine" id="cb32-35" data-line-number="35"><span class="ex">virtualenv</span> QC</a>
-<a class="sourceLine" id="cb32-36" data-line-number="36"><span class="bu">source</span> QC/bin/activate</a>
-<a class="sourceLine" id="cb32-37" data-line-number="37"></a>
-<a class="sourceLine" id="cb32-38" data-line-number="38"><span class="co">#' Install MultiQC in virtual environment</span></a>
-<a class="sourceLine" id="cb32-39" data-line-number="39"><span class="ex">pip</span> install multiqc</a>
-<a class="sourceLine" id="cb32-40" data-line-number="40"></a>
-<a class="sourceLine" id="cb32-41" data-line-number="41"><span class="co"># Generate a summary file</span></a>
-<a class="sourceLine" id="cb32-42" data-line-number="42"><span class="ex">multiqc</span> *</a>
-<a class="sourceLine" id="cb32-43" data-line-number="43"></a>
-<a class="sourceLine" id="cb32-44" data-line-number="44"><span class="co"># Move bash script to work directory</span></a>
-<a class="sourceLine" id="cb32-45" data-line-number="45"><span class="fu">mv</span> <span class="va">$HOME</span>/RNAseq_Pipeline/multiQC_raw.sh <span class="va">$QC</span></a>
-<a class="sourceLine" id="cb32-46" data-line-number="46"></a>
-<a class="sourceLine" id="cb32-47" data-line-number="47"><span class="co"># Job details</span></a>
-<a class="sourceLine" id="cb32-48" data-line-number="48"><span class="ex">scontrol</span> show job <span class="va">$SLURM_JOB_ID</span></a></code></pre></div>
+<a class="sourceLine" id="cb32-24" data-line-number="24"><span class="va">mkdir=$HOME</span>/RNAseq_Pipeline/Quality/Raw/out</a>
+<a class="sourceLine" id="cb32-25" data-line-number="25"><span class="va">Qrep=$HOME</span>/RNAseq_Pipeline/Quality/Raw/out</a>
+<a class="sourceLine" id="cb32-26" data-line-number="26"><span class="fu">mv</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Quality/Raw/*.zip <span class="va">$Qrep</span></a>
+<a class="sourceLine" id="cb32-27" data-line-number="27"></a>
+<a class="sourceLine" id="cb32-28" data-line-number="28"><span class="co">### Directory output files</span></a>
+<a class="sourceLine" id="cb32-29" data-line-number="29"><span class="co">## Create MultiQC output directory</span></a>
+<a class="sourceLine" id="cb32-30" data-line-number="30"><span class="fu">mkdir</span> <span class="va">$HOME</span>/RNAseq_Pipeline/Quality/Raw/MultiQC</a>
+<a class="sourceLine" id="cb32-31" data-line-number="31"></a>
+<a class="sourceLine" id="cb32-32" data-line-number="32"><span class="co"># Output directory</span></a>
+<a class="sourceLine" id="cb32-33" data-line-number="33"><span class="va">QC=$HOME</span>/RNAseq_Pipeline/Quality/Raw/MultiQC</a>
+<a class="sourceLine" id="cb32-34" data-line-number="34"></a>
+<a class="sourceLine" id="cb32-35" data-line-number="35"><span class="co">#' Create virtual environment</span></a>
+<a class="sourceLine" id="cb32-36" data-line-number="36"><span class="bu">cd</span> <span class="va">$QC</span></a>
+<a class="sourceLine" id="cb32-37" data-line-number="37"><span class="ex">virtualenv</span> QC</a>
+<a class="sourceLine" id="cb32-38" data-line-number="38"><span class="bu">source</span> QC/bin/activate</a>
+<a class="sourceLine" id="cb32-39" data-line-number="39"></a>
+<a class="sourceLine" id="cb32-40" data-line-number="40"><span class="co"># Install MultiQC in virtual environment</span></a>
+<a class="sourceLine" id="cb32-41" data-line-number="41"><span class="ex">pip</span> install multiqc</a>
+<a class="sourceLine" id="cb32-42" data-line-number="42"></a>
+<a class="sourceLine" id="cb32-43" data-line-number="43"><span class="co"># Generate a summary file</span></a>
+<a class="sourceLine" id="cb32-44" data-line-number="44"><span class="ex">multiqc</span> <span class="va">$Qrep</span>/*</a>
+<a class="sourceLine" id="cb32-45" data-line-number="45"></a>
+<a class="sourceLine" id="cb32-46" data-line-number="46"><span class="co"># Move bash script to work directory</span></a>
+<a class="sourceLine" id="cb32-47" data-line-number="47"><span class="fu">mv</span> <span class="va">$HOME</span>/RNAseq_Pipeline/multiQC_raw.sh <span class="va">$QC</span></a>
+<a class="sourceLine" id="cb32-48" data-line-number="48"></a>
+<a class="sourceLine" id="cb32-49" data-line-number="49"><span class="co"># Job details</span></a>
+<a class="sourceLine" id="cb32-50" data-line-number="50"><span class="ex">scontrol</span> show job <span class="va">$SLURM_JOB_ID</span></a></code></pre></div>
 <blockquote>
 <p>Save the script by pressing <code>Ctrl o</code> and <code>enter</code>. To exit press <code>Ctrl x</code>.</p>
 </blockquote>
 <p>To run MultiQC, copy the above script to your <code>Raw</code> directory and then submit the script to the scheduler with <code>sbatch</code>.</p>
 <div class="sourceCode" id="cb33"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="ex">sbatch</span> <span class="va">$HOME</span>/RNAseq_pipeline/multiQC_raw.sh</a></code></pre></div>
-<p>MultiQC will generate an HTML file with the concatenated FASTQC reportes. Download this HTML file to your computer.</p>
+<p>MultiQC will generate an HTML file with the concatenated FASTQC reports. Download this HTML file to your computer.</p>
 <p>For more information on the MultiQC single report, summaries see <a href="https://multiqc.info/">MultiQC web page</a>. A few things you can review in the aggregated report include sequence quality histograms, sequence length distribution, and overrepresented sequences. Look for any abnormalities in the data. Do not be too concerned with adapter contamination, unless it is excessive, and a few low-quality basses, we will process these artifacts out in the following steps.</p>
 <p>I hope you enjoyed this tutorial. Send any comments or suggestions to <a href="mailto:velezdeb@msu.edu">velezdeb@msu.edu</a>.</p>
 </div>

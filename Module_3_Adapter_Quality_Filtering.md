@@ -1,7 +1,8 @@
+
 ---
 title: Adapter and Quality Filtering
 author: Deborah Velez-Irizarry
-date: Updated Jan 27, 2020
+date: Updated Jan 31, 2020
 output:
   prettydoc::html_pretty:
     theme: hpstr
@@ -12,32 +13,111 @@ output:
 
 
 ### Description
-In this tutorial, we will cover Illumina adapter trimming and quality 
-filtering. Before we start this step we will need to merge fastq files 
+In this tutorial, we will cover Illumina adapter trimming and quality
+filtering. Before we start this step we will need to merge fastq files
 per animal.
 
 ![](https://user-images.githubusercontent.com/44003875/71802462-bb296280-302b-11ea-99fd-093405ec441b.png)
 
 ### Connect to HPC system
-If you are using Ubuntu, open up the terminal with `Ctrl`+`Alt`+`T`. 
-From the command line, log in to HPC using ssh. 
+If you are using Ubuntu, open up the terminal with `Ctrl`+`Alt`+`T`.
+From the command line, log in to HPC using ssh.
 
 **SSH **
 ```bash
 ssh -YX username@gateway.hpcc.msu.edu
 ```
 
-If you are using the remote desktop environment login to your terminal 
+If you are using the remote desktop environment login to your terminal
 through the Web-based remote desktop: [Web site access to HPCC](https://wiki.hpcc.msu.edu/display/ITH/Web+Site+Access+to+HPCC)
 
-### Merge Fasta files
-In our example we ran a second lane to increase the number of reads per 
-animal so we will need to merge these extra reads for the first and second 
-strand seperately. If you do not have multiple sequence runs per animal 
-you can skip this step. 
+### Check FASTQ Files
+Before we start, lets double check that we have paired-end FASTQ files per sample ID.
+The following script is run interactively to make sure all files are present in the 
+RAW directory.
 
-First, save the master script to the working directory you created for 
-the RNAseq pipeline.
+First, save the script to the working directory `RNAseq_pipeline`.
+
+```bash
+nano $HOME/RNAseq_Pipeline/check_raw_files.sh
+```
+
+> Copy the following script and paste in the terminal editor window.
+
+```bash
+#======================================================================
+#   Script: check_raw_files.sh
+#   Directory Code: $HOME/RNAseq_Pipeline
+#   Date: January 31, 2020
+#   Description: This script checks that each sample ID
+#	has paired-end fastq file. This script is run
+#	interactively and if you get an error for a specific 
+#	file, that file is missing from the directory and needs
+#	to be uploaded.
+#   Run: bash check_raw_files.sh
+#----------------------------------------------------------------------
+#   Input files in directory:
+#       $SCRATCH/RAW/*fastq
+#======================================================================
+
+# Directory of fastq files
+Raw=$SCRATCH/RAW
+
+# Animal IDs
+cd $Raw
+anim=(`ls *.fastq | cut -f1 -d_ | uniq`)
+
+# Check that you have the paired fastq files per sample
+# If you get an error stating that the file is not found
+# in that directory, that file is missing
+
+for ((i=0; i<${#anim[@]} ; i++ )) do
+
+ls $Raw/${anim[$i]}_*1*.fastq > $Raw/check
+ls $Raw/${anim[$i]}_*2*.fastq >> $Raw/check
+
+done
+
+rm $Raw/check
+```
+
+> Save the script by pressing `Ctrl o` and `enter`. To exit press `Ctrl x`.
+
+**NOTE:** If the extension of your fastq files is not `fastq` you will need to change
+the above script to match your files extension. If this applies to your data, run the
+following code snippet in the terminal to change `fastq` to `fq` extension.
+
+```bash
+sed -i 's/fastq/fq/g' check_raw_files.sh
+```
+
+Run the check script with `bash`:
+
+```bash
+bash $HOME/RNAseq_Pipeline/check_raw_files.sh
+```
+
+The check files script should produce no output, indicating that both fwd and rev fastq
+files are present in your RAW folder. Now, if got an error stating a file could not
+be found, make a note of the file ID and upload that file to your RAW directory before
+proceeding to the next step.
+
+
+### Merge Fasta files
+In our example, we ran a second lane to increase the number of reads per
+animal, so we will need to merge these extra reads for the first and second
+strand separately. If you do not have multiple sequence runs per animal,
+you still need to run the merge script to ensure the compatibility of file 
+names and directories in the subsequent steps of the pipeline. 
+
+**NOTE:** The following script takes as input ID_*1*.fastq and ID_*2*.fastq when
+retrieving fastq files per ID. If the naming scheme of your fastq data
+contains extra information, such as `ID_S13_L002_R2_001.fastq`, do not run 
+the script, you risk merging more files than intended. You will need to
+rename your data to avoid complications. If this applies to you and you need assistance
+in renaming your files, please email me your file names so that I can assist.
+
+Save the master script to merge files in your working directory `RNAseq_pipeline`.
 
 ```bash
 nano $HOME/RNAseq_Pipeline/Merge_RNASeq_reads_per_animal.sh
@@ -49,16 +129,16 @@ nano $HOME/RNAseq_Pipeline/Merge_RNASeq_reads_per_animal.sh
 #======================================================================
 #   Script: Merge_RNASeq_reads_per_animal.sh
 #   Directory Code: $HOME/RNAseq_Pipeline/Merged
-#   Date: January 6, 2020
+#   Date: January 31, 2020
 #   Description: Merge RNA-Seq reads for each animal into
 #          a single fastq file.
 #   Run: bash Merge_RNASeq_reads_per_animal.sh
 #----------------------------------------------------------------------
 #   Input files in directory:
-#       $SCRATCH/RAW/*fastq
+#       $SCRATCH/RAW
 #
 #   Output files to scratch directory:
-#       $SCRATCH/Merged/*fastq
+#       $SCRATCH/Merged
 #======================================================================
 
 # Directory of fastq files
@@ -95,16 +175,16 @@ cd '$Merg'
 
 # Files to merge
 echo "List of files to merge for '${anim[$i]}'"
-ls -ltrh '$Raw'/'${anim[$i]}'_*
+ls -ltrh '$Raw'/'${anim[$i]}'_*.fastq
 
 # Merge R1 fastq files for '${anim[$i]}'
-R1=(`ls '$Raw'/'${anim[$i]}'_*R1*`)
+R1=(`ls '$Raw'/'${anim[$i]}'_*1*.fastq`)
 for ((j=0; j<${#R1[@]} ; j++ )) do
 cat ${R1[$j]} >> '${anim[$i]}'_R1_merged.fastq
 done
 
 # Merge R2 fastq files for '${anim[$i]}'
-R2=(`ls '$Raw'/'${anim[$i]}'_*R2*`)
+R2=(`ls '$Raw'/'${anim[$i]}'_*2*.fastq`)
 for ((j=0; j<${#R2[@]} ; j++ )) do
 cat ${R2[$j]} >> '${anim[$i]}'_R2_merged.fastq
 done
@@ -121,57 +201,67 @@ done
 
 > Save the script by pressing `Ctrl o` and `enter`. To exit press `Ctrl x`.
 
+**NOTE:** Again, if the extension of your fastq files is not `fastq`, you will need to change
+the above script to the extension of your files. If this applies to your data, run the following 
+code snippet in the terminal to change `fastq` to `fq`. This is the last time you 
+will need to make this correction. The above script will rename your files to the fastq extension. 
+
+```bash
+sed -i 's/fastq/fq/g' Merge_RNASeq_reads_per_animal.sh
+sed -i 's/merged.fq/merged.fastq/g' Merge_RNASeq_reads_per_animal.sh
+```
+
 Run the Merge master script with `bash`:
 
 ```bash
 bash $HOME/RNAseq_Pipeline/Merge_RNASeq_reads_per_animal.sh
 ```
 
-This script will create a directory in your scratch space called Merged. 
+This script will create a directory in your scratch space called Merged.
 The merged fasta files will be saved to this directory.
 
 
 ### Trimmomatic
 
-Trimmomatic is a flexable read trimming tool created for Illumina 
+Trimmomatic is a flexable read trimming tool created for Illumina
 next-generation sequencing data. To learn more about Trimmomatic refer to:
 
-> Bolger, A.M., Lohse, M., &amp; Usadel, B. (2014). [Trimmomatic: A flexible trimmer for Illumina Sequence Data.](https://www.ncbi.nlm.nih.gov/pubmed/24695404) Bioinformatics, btu170.  
-> [Trimmomatic Website](http://www.usadellab.org/cms/index.php?page=trimmomatic)  
+> Bolger, A.M., Lohse, M., &amp; Usadel, B. (2014). [Trimmomatic: A flexible trimmer for Illumina Sequence Data.](https://www.ncbi.nlm.nih.gov/pubmed/24695404) Bioinformatics, btu170.
+> [Trimmomatic Website](http://www.usadellab.org/cms/index.php?page=trimmomatic)
 
 
 The parameters used to performe this step are as follows:
 
-**ILLUMINACLIP:**  
-Cuts the Illumina-sequence specific adapters. We will trim the TruSeq3-PE 
+**ILLUMINACLIP:**
+Cuts the Illumina-sequence specific adapters. We will trim the TruSeq3-PE
 adapter sequences shown below.
 
-> PrefixPE/1 TACACTCTTTCCCTACACGACGCTCTTCCGATCT  
-> PrefixPE/2 GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT  
-> PE1 TACACTCTTTCCCTACACGACGCTCTTCCGATCT  
-> PE1_rc AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTA  
-> PE2 GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT  
-> PE2_rc AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC  
+> PrefixPE/1 TACACTCTTTCCCTACACGACGCTCTTCCGATCT
+> PrefixPE/2 GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT
+> PE1 TACACTCTTTCCCTACACGACGCTCTTCCGATCT
+> PE1_rc AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTA
+> PE2 GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT
+> PE2_rc AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
 
-**HEADCROP**  
-Cut a specific number of bases from the start of the read. We will trim 
+**HEADCROP**
+Cut a specific number of bases from the start of the read. We will trim
 the first 6 bases.
 
-**LEADING**  
+**LEADING**
 Cut the leading bases only if below a quality of 3
 
-**TRAILING**  
+**TRAILING**
 Cut the trailing bases only if below a quality of 3
 
-**SLIDINGWINDOW**  
-Sliding window to scan read, we will use a 4-base window and trim if the 
-average quality is below 15. 
+**SLIDINGWINDOW**
+Sliding window to scan read, we will use a 4-base window and trim if the
+average quality is below 15.
 
-**MINLEN**  
+**MINLEN**
 Drop reads with a minumin length of 75 bases.
 
-  
-First, save the master script to the working directory you created for 
+
+First, save the master script to the working directory you created for
 the RNAseq pipeline tutorial.
 
 ```bash
@@ -184,7 +274,7 @@ nano $HOME/RNAseq_Pipeline/adapter_trimming.sh
 #======================================================================
 #   File: adapter_trimming.sh
 #   Directory code: $HOME/RNAseq_Pipeline/Trimmomatic
-#   Date: January 6, 2020
+#   Date: January 31, 2020
 #   Description: Trim adapter sequences using Trimmomatic software
 #   Run: bash adapter_trimming.sh
 #----------------------------------------------------------------------
@@ -267,10 +357,10 @@ Submit the master script for Trimmomatic to the SLURM scheduler.
 bash $HOME/RNAseq_Pipeline/adapter_trimming.sh
 ```
 
-This step should take about an hour to run. Wait until all jobs have 
-finished before continuing to the step. To check the jobs status use `qs`. 
-When all jobs have finished run the checkjobs within the `qstat` directory 
-to make sure the jobs ran with no errors. 
+This step should take about an hour to run. Wait until all jobs have
+finished before continuing to the step; check the job status with  `qs`.
+When all jobs have finished run the checkjobs within the `qstat` directory
+to make sure the jobs ran with no errors.
 
 ```bash
 cd $HOME/RNAseq_Pipeline/Trimmomatic/qstat
@@ -279,24 +369,24 @@ checkJobs
 
 ### Generate summary for quality trimming
 
-To keep a complete documentation of retained and dropped reads we will 
-create a summary file for each step in the RNA-seq bioinformatic pipeline. 
-We will extract this information from the job outfiles (one per animal or 
-animal-timepoint depending on the experimental design). Let us look at how 
-this information is provided by Trimmomatic:
+To keep complete documentation of retained and dropped reads, we will
+create a summary file for each step in the RNA-seq bioinformatics pipeline.
+We will extract this information from the job output files (one per animal or
+animal-timepoint depending on the experimental design). Let us look at how
+Trimmomatic provides this information:
 
 ```bash
 cd $HOME/RNAseq_Pipeline/Trimmomatic/qstat
 cat `ls | grep -v qsub | head -1`
 ```
 
-Observe the number provided for `Input Read Pair`, `Both Surviving`, 
-`Forward Only Surviving`, `Reverse Only Surviving`, and `Dropped`. 
-Notice that this quality step generates both paired and single 
-reads. This happens when the trimming results in a complete loss of one 
-of the read paires. We will extract this information for each of the jobs 
-submitted and save it to a tab delimited matrix that we will use at the 
-end of the pipeline to asses retained and loss reads. 
+Observe the number provided for `Input Read Pair`, `Both Surviving`,
+`Forward Only Surviving`, `Reverse Only Surviving`, and `Dropped`.
+Notice that this quality step generates both paired and single
+reads, this happens when the trimming results in a complete loss of one
+of the read pairs. We will extract this information for each of the jobs
+submitted and save it to a tab-delimited matrix that we will use at the
+end of the pipeline to asses retained and loss reads.
 
 
 ```bash
@@ -309,7 +399,7 @@ nano $HOME/RNAseq_Pipeline/merge_rst_trim_adapters.sh
 #===================================================================
 #   File: merge_rst_trim_adapters.sh
 #   Directory: $HOME/RNAseq_Pipeline/Trimmomatic
-#   Date: January 6, 2020
+#   Date: January 31, 2020
 #   Description: Check that all files were properly trimmed and merge
 #                all the results.
 #   Run: bash merge_rst_trim_adapters.sh
@@ -326,7 +416,7 @@ nano $HOME/RNAseq_Pipeline/merge_rst_trim_adapters.sh
 #====================================================================
 
 ### Raw RNA-seq Directory
-raw=$SCRATCH/RAW
+raw=$SCRATCH/Merged
 
 ### Animal IDs
 cd $raw
@@ -389,18 +479,18 @@ rm id input.read.pairs both.surviving fwd.only.surviving rev.only.surviving drop
 
 > Save the script by pressing `Ctrl o` and `enter`. To exit press `Ctrl x`.
 
-Run the script using bash. 
+Run the script using bash.
 
 ```bash
 bash $HOME/RNAseq_Pipeline/merge_rst_trim_adapters.sh
 ```
 
-This bash script will be run interactively; meaning that it will not be submitted to the 
-scheduler. An error generated from this script will point you to a job that did not generate 
-output. If you get an error rerun the qsub script for that file. Refer to the qstat job output 
-file for further instructions. If the job did not finish in the time allocated or used up more 
-memory than requested you will need to edit the qsub file and increase the requested resorces 
-before resubmitting the job to SLURM. 
+This bash script will be run interactively, meaning that it will not be submitted to the
+scheduler. An error generated from this script will point you to a job that did not produce
+output. If you get an error, rerun the qsub script for that file. Refer to the qstat job output
+file for further instructions. If the job did not finish in the time allocated or used up more
+memory than requested, you would need to edit the qsub file and increase the required resources
+before resubmitting the job to SLURM.
 
 Let us review the summary files generated.
 
@@ -409,7 +499,7 @@ cd $HOME/RNAseq_Pipeline/Trimmomatic
 cat trimmomatic_rst.txt
 ```
 
-We would expect a high percent of retained paired reads and about less than 2.5% dropped reads 
+We would expect a high percentage of retained paired reads and about less than 2.5% dropped reads
 in this step. Let us review the percent of retained paired reads and dropped reads.
 
 ```bash
@@ -418,11 +508,11 @@ cat rst_trim_adapt.txt | cut -f1,8,21 -d' '
 ```
 
 
-### Assessing Filtered Read Quality: FASTQC 
+### Assessing Filtered Read Quality: FASTQC
 
-We have successfully removed Illumina adapter sequences from our RNA-seq data and filtered out 
-low quality bases. Let us review the quality of these filtered reads. We need to first run
-`FASTQC` followed by `MultiQC` to concatenate the FASTQC summaries. 
+We have successfully removed Illumina adapter sequences from our RNA-seq data and filtered out
+low-quality bases. Let us review the quality of these filtered reads. We need first to run
+`FASTQC` followed by `MultiQC` to concatenate the FASTQC summaries.
 
 ```bash
 nano $HOME/RNAseq_Pipeline/FastQC_quality_filtered.sh
@@ -435,7 +525,7 @@ nano $HOME/RNAseq_Pipeline/FastQC_quality_filtered.sh
 #==============================================================================
 #   File: FastQC_quality_filtered.sh
 #   Directory code: $HOME/RNAseq_Pipeline/Quality/Filtered
-#   Date: January 6, 2020
+#   Date: January 31, 2020
 #   Description: Generate FastQC reports for raw sequence reads.
 #   Run: bash FastQC_Filtered.sh
 #------------------------------------------------------------------------------
@@ -463,7 +553,7 @@ mkdir $HOME/RNAseq_Pipeline/Quality/Filtered/qstat
 qstat=$HOME/RNAseq_Pipeline/Quality/Filtered/qstat
 
 # Animal IDs
-cd $SCRATCH/RAW
+cd $SCRATCH/Merged
 anim=(`ls *.fastq | cut -f1 -d_ | uniq`)
 
 # Write bash script for each animal
@@ -505,7 +595,7 @@ Run master script:
 bash $HOME/RNAseq_Pipeline/FastQC_quality_filtered.sh
 ```
 
-The FASTQC master will create a new directory in your Quality folder called `Filtered`. 
+The FASTQC master will create a new directory in your Quality folder called `Filtered`.
 Let us take a look at one of the submitted scripts:
 
 ```bash
@@ -519,14 +609,14 @@ Check the status of the submitted jobs by using the show jobs shortcut:
 sq
 ```
 
-For now, we wait for the jobs to finish. Only when the `sq` displays zero 
+For now, we wait for the jobs to finish. Only when the `sq` displays zero
 running jobs can we proceed to the next step.
 
 
 ### Generate MultiQC Report: Filtered
 
-Before checking the quality summaries for the raw sequence, files let us 
-first make sure all our jobs ran without errors or warnings. 
+Before checking the quality summaries, first, make sure all our jobs ran 
+without errors or warnings.
 Change to the `qstat` directory and run `checkJobs`.
 
 ```bash
@@ -534,8 +624,7 @@ cd $HOME/RNAseq_Pipeline/Quality/Filtered/qstat
 checkJobs
 ```
 
-If the jobs finished with no errors we can proceed to generate the 
-MultiQC report:
+If the jobs finished with no errors, proceed to generate the MultiQC report:
 
 ```bash
 nano $HOME/RNAseq_Pipeline/multiQC_quality_filtered.sh
@@ -567,8 +656,8 @@ nano $HOME/RNAseq_Pipeline/multiQC_quality_filtered.sh
 #==============================================================================
 
 ### Directory input files
-mkdir $HOME/RNAseq_Pipeline/Quality/Filtered/output
-Qrep=$HOME/RNAseq_Pipeline/Quality/Filtered/output
+mkdir $HOME/RNAseq_Pipeline/Quality/Filtered/out
+Qrep=$HOME/RNAseq_Pipeline/Quality/Filtered/out
 mv $HOME/RNAseq_Pipeline/Quality/Filtered/*.zip $Qrep
 
 ### Directory output files
@@ -584,7 +673,7 @@ source QC/bin/activate
 
 # Generate a summary file
 cd $QC
-multiqc $Qrep
+multiqc $Qrep/*
 deactivate
 
 # Move bash script to work directory
@@ -600,9 +689,9 @@ Run MultiQC on the filtered FASTQ files.
 sbatch $HOME/RNAseq_pipeline/multiQC_raw.sh
 ```
 
-Download the MultiQC report for quality filtered reads and compare with the previous MultiQC
+Download the MultiQC report for quality-filtered reads and compare it with the previous MultiQC
 report generated for the raw sequence reads. You should see an improvement in the base quality
-phred scores and see no adpater sequences.
+Phred scores and see no adapater sequences.
 
 I hope you enjoyed this tutorial. Send any comments or suggestions to velezdeb@msu.edu.
 

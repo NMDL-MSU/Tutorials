@@ -1,8 +1,7 @@
-
 ---
 title: RNA Sequence Alignment
 author: Deborah Velez-Irizarry
-date: Updated Jan 8 2020
+date: Updated Jan 31, 2020
 output:
   prettydoc::html_pretty:
     theme: hpstr
@@ -12,34 +11,33 @@ output:
 
 
 ### Description
-In this tutorial, we will cover how to download a reference genome, 
-build a reference index with HISAT2 build and short read alignment with HISAT2.
+In this tutorial, we will cover how to download a reference genome,
+build a reference index, and perform short read alignment with HISAT2.
 
 ![](https://user-images.githubusercontent.com/44003875/71802562-00e62b00-302c-11ea-9584-bef4ec248f61.png)
 
 
 ### Connect to HPC system
-If you are using Ubuntu, open up the terminal with `Ctrl`+`Alt`+`T`. 
-From the command line, log in to HPC using ssh. 
+If you are using a terminal, from the command line, log in to HPC using ssh.
 
 ```bash
 ssh -YX username@gateway.hpcc.msu.edu
 ```
 
-If you are using the remote desktop environment login to your terminal 
+If you are using the remote desktop environment login to your terminal
 through the Web-based remote desktop: [Web site access to HPCC](https://wiki.hpcc.msu.edu/display/ITH/Web+Site+Access+to+HPCC)
 
 ### Obtain Referece Genome
-We will use NCBI to download your reference genome. Below are two examples, 
-the first will download the most horse genome (EquCab3) and the second the
-cattle genome (ARS-UCD1.2). If you wish to download a different reference 
+We will use NCBI to download your reference genome. Below are two examples,
+the first will download the horse genome (EquCab3) and the second the
+cattle genome (ARS-UCD1.2). If you wish to download a different reference
 go to [NCBI](https://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_mammalian/)
 and note the path to your reference of interest.
 
-The files we will download from NCBI in this tutorial are the following:  
-> Annotation release information. 
-> Assembly report and statistics   
-> Reference FASTA and GTF (annotation) files  
+The files we will download from NCBI in this tutorial are the following:
+> Annotation release information.
+> Assembly report and statistics
+> Reference FASTA and GTF (annotation) files
 
 **EquCab3**
 
@@ -49,8 +47,8 @@ ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_mammalian/
 Equus_caballus/latest_assembly_versions/GCF_002863925.1_EquCab3.0/
 
 - README_Equus_caballus_annotation_release_103
-- GCF_002863925.1_EquCab3.0_assembly_report.txt 
-- GCF_002863925.1_EquCab3.0_assembly_stats.txt  
+- GCF_002863925.1_EquCab3.0_assembly_report.txt
+- GCF_002863925.1_EquCab3.0_assembly_stats.txt
 - GCF_002863925.1_EquCab3.0_genomic.fna.gz
 - GCF_002863925.1_EquCab3.0_genomic.gtf.gz
 
@@ -80,7 +78,7 @@ nano $HOME/RNAseq_Pipeline/EquCab3.sh
 #	README_Equus_caballus_annotation_release_103
 #	GCF_002863925.1_EquCab3.0_assembly_report.txt
 #	GCF_002863925.1_EquCab3.0_assembly_stats.txt
-#	GCF_002863925.1_EquCab3.0_genomic.fna.gz 
+#	GCF_002863925.1_EquCab3.0_genomic.fna.gz
 #	GCF_002863925.1_EquCab3.0_genomic.gtf.gz
 #	GenBankAccn.txt
 #	EquCab3.fa
@@ -110,7 +108,7 @@ wget -r -np -nH --cut-dirs=7 $ftp/README_Equus_caballus_annotation_release_103
 wget -r -np -nH --cut-dirs=7 $ftp/GCF_002863925.1_EquCab3.0_assembly_report.txt
 wget -r -np -nH --cut-dirs=7 $ftp/GCF_002863925.1_EquCab3.0_assembly_stats.txt
 wget -r -np -nH --cut-dirs=7 $ftp/GCF_002863925.1_EquCab3.0_genomic.fna.gz
-wget -r -np -nH --cut-dirs=7 $ftp/GCF_002863925.1_EquCab3.0_genomic.gtf.gz   
+wget -r -np -nH --cut-dirs=7 $ftp/GCF_002863925.1_EquCab3.0_genomic.gtf.gz
 
 # Unzip Files
 gunzip *.gz
@@ -159,8 +157,8 @@ The BosTau9.sh bash script will obtain the following cattle reference genome fil
 ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_mammalian/
 Bos_taurus/latest_assembly_versions/GCF_002263795.1_ARS-UCD1.2/
 
-- README_Bos_taurus_annotation_release_106  
-- GCF_002263795.1_ARS-UCD1.2_assembly_report.txt                              
+- README_Bos_taurus_annotation_release_106
+- GCF_002263795.1_ARS-UCD1.2_assembly_report.txt
 - GCF_002263795.1_ARS-UCD1.2_assembly_stats.txt
 - GCF_002263795.1_ARS-UCD1.2_genomic.fna.gz
 - GCF_002263795.1_ARS-UCD1.2_genomic.gtf.gz
@@ -191,7 +189,7 @@ nano $HOME/RNAseq_Pipeline/BosTau9.sh
 #   README_Bos_taurus_annotation_release_106
 #	GCF_002263795.1_ARS-UCD1.2_assembly_report.txt
 #	GCF_002263795.1_ARS-UCD1.2_assembly_stats.txt
-#	GCF_002263795.1_ARS-UCD1.2_genomic.fna.gz 
+#	GCF_002263795.1_ARS-UCD1.2_genomic.fna.gz
 #	GCF_002263795.1_ARS-UCD1.2_genomic.gtf.gz
 #	BosTau9.fa
 #	GenBankAccn.txt
@@ -218,7 +216,7 @@ ftp=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_mammalian/Bos_taurus/la
 wget -r -np -nH --cut-dirs=7 $ftp/README_Bos_taurus_annotation_release_106
 wget -r -np -nH --cut-dirs=7 $ftp/GCF_002263795.1_ARS-UCD1.2_assembly_report.txt
 wget -r -np -nH --cut-dirs=7 $ftp/GCF_002263795.1_ARS-UCD1.2_assembly_stats.txt
-wget -r -np -nH --cut-dirs=7 $ftp/GCF_002263795.1_ARS-UCD1.2_genomic.fna.gz  
+wget -r -np -nH --cut-dirs=7 $ftp/GCF_002263795.1_ARS-UCD1.2_genomic.fna.gz
 wget -r -np -nH --cut-dirs=7 $ftp/GCF_002263795.1_ARS-UCD1.2_genomic.gtf.gz
 
 # Unzip Files
@@ -261,21 +259,21 @@ mv $HOME/RNAseq_Pipeline/BosTau9.sh $dir
 bash $HOME/RNAseq_Pipeline/BosTau9.txt.sh
 ```
 
-Notice that before we index the reference genome we update the chromosome names.
-This step is added to avoid the use of chromosome identifiers in the subsequent steps.
+Notice that before we index the reference genome, we update the chromosome names.
+We added this step to avoid the use of chromosome identifiers in the subsequent steps.
 
 
-### Index reference genome 
+### Index reference genome
 
-We need to index the reference genome to efficiently map the short RNA-seq reads. 
-This will be accomplished with HISAT2 build, an ultrafast and memory-efficient tool for 
-aligning sequencing reads to long reference sequences. For more information on
-HISAT2 please review the following references and webcite.
+We need to index the reference genome to efficiently map the short RNA-seq reads.
+HISAT2 is an ultrafast and memory-efficient tool for
+aligning sequencing reads to long reference sequences; we will use this tool for indexing and mapping. 
+For more information on HISAT2, please review the following references and website.
 
 **HISAT2 References**
 
-Kim, Daehwan and Langmead, Ben and Salzberg, Steven L (2015). 
-[HISAT: a fast spliced aligner with low memory requirements.](https://www.ncbi.nlm.nih.gov/pubmed/25751142) 
+Kim, Daehwan and Langmead, Ben and Salzberg, Steven L (2015).
+[HISAT: a fast spliced aligner with low memory requirements.](https://www.ncbi.nlm.nih.gov/pubmed/25751142)
 INature Methods, 12(4):357-360.
 
 Pertea M, Kim D, Pertea GM, Leek JT, Salzberg SL (2016).
@@ -356,7 +354,7 @@ sbatch Index.qsub
 bash $HOME/RNAseq_Pipeline/build_reference_index_hisat2.sh
 ```
 
-Before procceding to the next step check that the job finished 
+Before procceding to the next step check that the job finished
 with no errors.
 
 ```bash
@@ -367,30 +365,30 @@ checkJobs
 
 ### Alignment of reads to reference
 
-HISAT2 (hierarchical indexing for spliced alignment of transcripts) is an 
-alignment program for mapping next-generation sequencing reads. This method 
-have been described in [Nature Protocols](https://www.ncbi.nlm.nih.gov/pubmed/27560171).
+HISAT2 (hierarchical indexing for spliced alignment of transcripts) is an
+alignment program for mapping next-generation sequencing reads. This method
+has been described in [Nature Protocols](https://www.ncbi.nlm.nih.gov/pubmed/27560171).
 We will run the alignment per animal using a master script. To ensure the jobs
-finish in the time allocated we will use eight cores.
+finish in the time allocated, we will use eight cores.
 
 There are several options available for HISAT2, go to the [HISAT2 mannual](https://ccb.jhu.edu/software/hisat2/manual.shtml) to view
 all available options.
 
-In this tutorial we are aligning Illimina paired end reads, from fastq files, 
-that have strand specific information. The options selected are:
+In this tutorial, we are aligning Illumina paired-end reads, from fastq files,
+that have strand-specific information. The options selected are:
 
-> `-q` refering to fastq files  
-> `--phred33` input qualities are ASCII chars equal to phred33 quality scores (Illumina)  
+> `-q` refering to fastq files
+> `--phred33` input qualities are ASCII chars equal to phred33 quality scores (Illumina)
 > `--rna-strandness RF` specifies the strand-specific information as `R` first strand (or reverse complement)
-> and `F` the second strand (or transcript)   
-> `--met-stderr` saves the metrics report to the "standard error" output file  
-> `--dta-cufflinks` report strand inforamation for every spliced alignment (XS:A[+-])  
-> `-p 8` parallel search threads, in this case 8  
-> `-x` basename of the index for the reference genome  
-> `-1` mate 1 fastq file  
-> `-2` mate 2 fastq file  
-> `-U` single mates (unpaired reads) fastq file  
-> `-S` name for output sam file  
+> and `F` the second strand (or transcript)
+> `--met-stderr` saves the metrics report to the "standard error" output file
+> `--dta-cufflinks` report strand inforamation for every spliced alignment (XS:A[+-])
+> `-p 8` parallel search threads, in this case 8
+> `-x` basename of the index for the reference genome
+> `-1` mate 1 fastq file
+> `-2` mate 2 fastq file
+> `-U` single mates (unpaired reads) fastq file
+> `-S` name for output sam file
 
 ```bash
 nano $HOME/RNAseq_Pipeline/hisat2_align_reads.sh
@@ -402,7 +400,7 @@ nano $HOME/RNAseq_Pipeline/hisat2_align_reads.sh
 #==============================================================================
 #   File: hisat2_align_reads.sh
 #   Directory code: $HOME/RNAseq_Pipeline/HISAT2
-#   Date: January 6, 2020
+#   Date: January 31, 2020
 #   Description: Run the splice junction mapper using the stranded
 #                protocol with HISAT2 on the adapter and quality trimmed data.
 #                A folder will be created per sample.
@@ -418,7 +416,7 @@ nano $HOME/RNAseq_Pipeline/hisat2_align_reads.sh
 #==============================================================================
 
 # Animal IDs
-cd $SCRATCH/RAW
+cd $SCRATCH/Merged
 anim=(`ls *.fastq | cut -f1 -d_ | uniq`)
 
 # Work Directory
@@ -488,8 +486,8 @@ done
 bash $HOME/RNAseq_Pipeline/hisat2_align_reads.sh
 ```
 
-Check submitted jobs `sq`. When all jobs have completed, check that the 
-hisat2 jobs finished with no errors before procceding to the next step.
+Check submitted jobs `sq`. When all jobs have completed, check that the
+hisat2 jobs finished with no errors before proceeding to the next step.
 
 ```bash
 cd $HOME/RNAseq_Pipeline/HISAT2/qstat
@@ -506,8 +504,8 @@ cd $HOME/RNAseq_Pipeline/HISAT2/qstat
 cat `ls | grep -v qsub | head -1`
 ```
 
-We will extract the most important statistics from this output. 
-First create the master script.
+We will extract the most essential statistics from this output.
+First, create the master script.
 
 ```bash
 nano $HOME/RNAseq_Pipeline/check_hisat2_jobs.sh
@@ -519,7 +517,7 @@ nano $HOME/RNAseq_Pipeline/check_hisat2_jobs.sh
 #==============================================================================
 #   File: check_hisat2_jobs.sh
 #   Directory code: $HOME/RNAseq_Pipeline/HISAT2
-#   Date: January 6, 2020
+#   Date: January 31, 2020
 #   Description: Check that all scripts ran, produced output and
 #                finished without errors.
 #                Generate alignment summaries for all animals.
@@ -551,7 +549,7 @@ home=$HOME/RNAseq_Pipeline/HISAT2
 mv $HOME/RNAseq_Pipeline/check_hisat2_jobs.sh $home
 
 # Animal IDs
-cd $SCRATCH/RAW
+cd $SCRATCH/Merged
 anim=(`ls *.fastq | cut -f1 -d_ | uniq`)
 
 # Check that you have output for each file
@@ -623,8 +621,8 @@ done
 bash $HOME/RNAseq_Pipeline/check_hisat2_jobs.sh
 ```
 
-Check submitted jobs `sq`. When all jobs have completed, check if 
-jobs finished with no errors before procceding to the next step.
+Check submitted jobs `sq`. When all jobs have completed, check if
+jobs finished with no errors before proceeding to the next step.
 
 ```bash
 cd $HOME/RNAseq_Pipeline/HISAT2/qstat/summary
@@ -634,8 +632,8 @@ checkJobs
 
 ### HISAT2 summary file
 
-Now that we have alignment statistics per animal we can concatinate then
-to matrix form. This summary file will be saved as `summary_alignment.txt`.
+Now that we have alignment statistics per animal, we can concatenate then
+to matrix form. The summary file is saved as `summary_alignment.txt`.
 
 ```bash
 nano $HOME/RNAseq_Pipeline/summary_hisat2.sh
@@ -647,7 +645,7 @@ nano $HOME/RNAseq_Pipeline/summary_hisat2.sh
 #==============================================================================
 #   File: summary_hisat2.sh
 #   Directory code: $HOME/RNAseq_Pipeline/HISAT2
-#   Date: January 6, 2020
+#   Date: January 31, 2020
 #   Description: Merge alignment summaries for each animal to a single file.
 #   Run: bash summary_hisat2.sh
 #------------------------------------------------------------------------------
@@ -668,7 +666,7 @@ out=$HOME/RNAseq_Pipeline/HISAT2
 mv $HOME/RNAseq_Pipeline/summary_hisat2.sh $out
 
 # Animal IDs
-cd $SCRATCH/RAW
+cd $SCRATCH/Merged
 anim=(`ls *.fastq | cut -f1 -d_ | uniq`)
 
 # Summary statistics from alignment
@@ -699,6 +697,7 @@ head $HOME/RNAseq_Pipeline/HISAT2/summary_alignment.txt
 ```
 
 I hope you enjoyed this tutorial. Send any comments or suggestions to velezdeb@msu.edu.
+
 
 
 
